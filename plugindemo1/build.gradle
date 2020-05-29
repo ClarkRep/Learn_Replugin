@@ -1,0 +1,86 @@
+apply plugin: 'com.android.application'
+
+def config = rootProject.ext.android
+def versions = rootProject.ext.versions
+def libraries = rootProject.ext.dependencies
+
+android {
+    // 编译SDK的版本
+    compileSdkVersion config.compileSdkVersion
+
+    defaultConfig {
+        applicationId "com.clark.learn.replugin.plugindemo1"
+        //minSDk
+        minSdkVersion config.minSdkVersion
+        //targetSdk
+        targetSdkVersion config.targetSdkVersion
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    configurations {
+        /* 所有插件排除 fragment 依赖 */
+        all*.exclude group: 'androidx.fragment', module: 'fragment'
+//        all*.exclude group: 'androidx.vectordrawable'
+    }
+
+    //这里移除宿主里面的类，但是被直接引用的删除不掉
+//    applicationVariants.all { variant ->
+//        variant.javaCompile.doLast {
+//            println("${buildDir}/intermediates/classes/debug/com/clark/learn/replugin/library/ITestInterface.class")
+//            def deleteFile = new File("${buildDir}/intermediates/classes/debug/com/clark/learn/replugin/library/ITestInterface.class")
+//            deleteFile.delete()
+//
+//            println("${buildDir}/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/clark/learn/replugin/library/ITestInterface.class")
+//            def deleteFile3 = new File("${buildDir}/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/clark/learn/replugin/library/ITestInterface.class")
+//            deleteFile3.delete()
+//        }
+//    }
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+// 这个plugin需要放在android配置之后，因为需要读取android中的配置项
+apply plugin: 'replugin-plugin-gradle'
+repluginPluginConfig {
+    pluginName = "plugindemo1plugindemo1.apk"
+    hostApplicationId = versions.hostApplicationId
+    hostAppLauncherActivity = "com.clark.learn.replugin.host.MainActivity"
+}
+
+dependencies {
+    //360插件库依赖
+    implementation "com.qihoo360.replugin:replugin-plugin-lib:$replugin_version"
+
+    compileOnly files('libs/androidx-fragment-1.0.0.jar')
+
+    compileOnly files('libs/test.jar')
+
+    implementation(libraries.androidXAppcompat, {
+        exclude group: 'androidx.fragment', module: 'fragment'
+    })
+
+    implementation libraries.androidXConstraintlayout
+    implementation libraries.androidXLifecycleViewmodle
+    implementation libraries.androidXSavedstate
+    implementation libraries.androidXActivity
+
+}

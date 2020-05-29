@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.clark.learn.replugin">
+
+    <application
+        android:name=".host.BaseApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".host.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".host.TestPluginFragmentActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".host.TestAddPluginViewActivity"
+            android:screenOrientation="portrait" />
+
+        <!--这个Activity声明是为了欺骗部分SDK校验四大组件是否在清单文件中声明-->
+        <activity
+            android:name=".plugindemo1.PluginFragmentActivity"
+            android:screenOrientation="portrait" />
+
+        <provider
+            android:name=".host.FileProvider"
+            android:authorities="com.clark.learn.replugin.FILE_PROVIDER"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/fileprovider_path" />
+        </provider>
+
+    </application>
+
+</manifest>

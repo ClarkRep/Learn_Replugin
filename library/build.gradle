@@ -1,0 +1,65 @@
+apply plugin: 'com.android.library'
+
+def config = rootProject.ext.android
+def versions = rootProject.ext.versions
+def libraries = rootProject.ext.dependencies
+
+android {
+    // 编译SDK的版本
+    compileSdkVersion config.compileSdkVersion
+
+    defaultConfig {
+        //minSDk
+        minSdkVersion config.minSdkVersion
+        //targetSdk
+        targetSdkVersion config.targetSdkVersion
+
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+//    implementation libraries.androidXAppcompat
+//    implementation libraries.androidXConstraintlayout
+//    implementation libraries.androidXLocalbroadcastmanager
+
+}
+
+//打包aar
+//task copyLibrary(type: Copy) {
+//
+//    from('build/outputs/aar/library-debug.aar')
+//    into('../plugindemo1/libs')
+//    ///Rename the aar
+//    rename('library-debug.aar', 'plugin-library.aar')
+//}
+//
+//copyLibrary.dependsOn(build)
+
+//打包jar
+task clearJar(type: Delete) {
+    delete 'build/test.jar' //jar包的名字，随便命名
+}
+task makeJar(type: org.gradle.api.tasks.bundling.Jar) {
+    //指定生成的jar名
+    baseName 'test'
+    //从哪里打包class文件
+    from('build/intermediates/javac/release/compileReleaseJavaWithJavac/classes')
+    //打包到jar后的目录结构，严重注意：下面into里面的路径不能改，否则会多生成一层路径。
+    into('/')
+    //去掉不需要打包的目录和文件
+    exclude('androidx/', 'test/', 'BuildConfig.class', 'R.class')
+    //去掉R开头的文件
+    exclude { it.name.startsWith('R') }
+}
+makeJar.dependsOn(clearJar, build)

@@ -1,0 +1,39 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+apply from: 'config.gradle'
+
+buildscript {
+
+    //360的Replugin的版本
+    ext.replugin_version = '2.3.3'
+
+    repositories {
+        google()
+        jcenter()
+
+    }
+    dependencies {
+        //gradle版本
+        classpath 'com.android.tools.build:gradle:3.2.0'
+
+        //Replugin的 host 依赖
+        classpath "com.qihoo360.replugin:replugin-host-gradle:$replugin_version"
+
+        //Replugin的 plugin 依赖
+        classpath "com.qihoo360.replugin:replugin-plugin-gradle:$replugin_version"
+
+        //kotlin的gradle插件依赖
+//        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

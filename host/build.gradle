@@ -1,0 +1,63 @@
+apply plugin: 'com.android.application'
+
+def config = rootProject.ext.android
+def versions = rootProject.ext.versions
+def libraries = rootProject.ext.dependencies
+
+android {
+    // 编译SDK的版本
+    compileSdkVersion config.compileSdkVersion
+
+    defaultConfig {
+        applicationId versions.hostApplicationId
+        versionName versions.versionName
+        versionCode versions.versionCode
+        //minSDk
+        minSdkVersion config.minSdkVersion
+        //targetSdk
+        targetSdkVersion config.targetSdkVersion
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+apply plugin: 'replugin-host-gradle'
+repluginHostConfig {
+    useAppCompat = false
+
+    // 设置为“不需要常驻进程”,以主进程为插件管理进程
+    persistentEnable = false
+}
+
+dependencies {
+
+    implementation files('libs/test.jar')
+
+//    implementation(name: 'library-release', ext: 'aar')
+
+    //该库是修改replugin host gradle源码后编译的库（replugin自身bug导致编译失败），暂时放在本地，后续优化
+//    implementation "com.qihoo360.replugin:replugin-host-lib:$replugin_version"
+    implementation project(':replugin-host-lib')
+
+    implementation libraries.androidXAppcompat
+    implementation libraries.androidXConstraintlayout
+    implementation libraries.androidXLocalbroadcastmanager
+    implementation libraries.androidXSupportV4
+
+}

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".host.MainActivity">
+
+    <Button
+        android:id="@+id/btn_click1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="安装插件1，跳转插件Activity"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_click2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="安装插件1，跳转宿主Activity，在宿主Activity添加插件的Fragment"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_click3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="安装插件1，跳转插件Activity，在插件Activity添加插件的Fragment"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_click4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="安装插件1，跳转宿主Activity，在宿主Activity里添加插件的View"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</LinearLayout>
