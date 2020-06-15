@@ -24,6 +24,7 @@ ext {
             androidXLocalbroadcastmanager: 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0',
 
             androidXSupportV4            : "androidx.legacy:legacy-support-v4:1.0.0",
+            androidXSupportV7            : 'androidx.appcompat:appcompat:1.0.0',
             androidXLifecycleViewmodle   : "androidx.lifecycle:lifecycle-viewmodel:2.1.0",
             androidXSavedstate           : "androidx.savedstate:savedstate:1.0.0",
             androidXActivity             : "androidx.activity:activity:1.0.0",

@@ -1,1 +1,1 @@
-include ':host', ':plugindemo1', ':replugin-host-lib', ':library'
+include ':host', ':plugindemo1', ':RepluginHostLib', ':RepluginPluginLib', ':library'

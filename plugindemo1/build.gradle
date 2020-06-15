@@ -68,7 +68,8 @@ repluginPluginConfig {
 
 dependencies {
     //360插件库依赖
-    implementation "com.qihoo360.replugin:replugin-plugin-lib:$replugin_version"
+//    implementation "com.qihoo360.replugin:replugin-plugin-lib:$replugin_version"
+    implementation project(':RepluginPluginLib')
 
     compileOnly files('libs/androidx-fragment-1.0.0.jar')
 

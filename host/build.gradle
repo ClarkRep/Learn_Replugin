@@ -53,7 +53,7 @@ dependencies {
 
     //该库是修改replugin host gradle源码后编译的库（replugin自身bug导致编译失败），暂时放在本地，后续优化
 //    implementation "com.qihoo360.replugin:replugin-host-lib:$replugin_version"
-    implementation project(':replugin-host-lib')
+    implementation project(':RepluginHostLib')
 
     implementation libraries.androidXAppcompat
     implementation libraries.androidXConstraintlayout
