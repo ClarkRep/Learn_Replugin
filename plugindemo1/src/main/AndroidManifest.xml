@@ -5,6 +5,26 @@
         android:allowBackup="true"
         android:label="@string/app_name">
 
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".TestFragmentActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".TestClassNameActivity"
+            android:screenOrientation="portrait" />
+
+        <!-- 以下是 Replugin 需要配置的插件参数 ***************************************************** -->
         <meta-data
             android:name="process_map"
             android:value="[
@@ -18,21 +38,6 @@
         <meta-data
             android:name="com.qihoo360.plugin.version.ver"
             android:value="100" />
-
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".PluginFragmentActivity"
-            android:screenOrientation="portrait" />
 
     </application>
 

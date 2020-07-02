@@ -2,6 +2,7 @@ package com.clark.learn.replugin.host;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,12 +44,9 @@ public class TestPluginFragmentActivity extends AppCompatActivity {
             Class<?> fragmentClass = d1ClassLoader.loadClass(PLUGIN_HOOK_BASE_FRAGMENT);
             Fragment fragment = fragmentClass.asSubclass(Fragment.class).newInstance();//使用插件的Classloader获取指定Fragment实例
             getSupportFragmentManager().beginTransaction().replace(R.id.fl_container, fragment).commit();//添加Fragment到UI
-        } catch (InstantiationException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

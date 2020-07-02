@@ -30,6 +30,6 @@ public class TestFragment extends Fragment {
         Log.d("haha", "RePlugin.fetchContext(\"plugindemo1\")==" + RePlugin.fetchContext("plugindemo1"));
 
         Context context = RePlugin.getPluginContext();
-        return LayoutInflater.from(context).inflate(R.layout.plugin_fragment_test_haha, container, false);
+        return LayoutInflater.from(context).inflate(R.layout.fragment_test, container, false);
     }
 }

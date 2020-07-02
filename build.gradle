@@ -7,19 +7,39 @@ buildscript {
     ext.replugin_version = '2.3.3'
 
     repositories {
+
+        if (isRepluginGradleUseNative.toBoolean()) {
+            maven {
+                url uri('./RepluginHostLocalRepo')
+            }
+            maven {
+                url uri('./RepluginPluginLocalRepo')
+            }
+        }
+
+//        maven{
+//            url "https://dl.bintray.com/froyo-github/Replugin-AndroidX"
+//        }
+
         google()
         jcenter()
-
     }
     dependencies {
         //gradle版本
         classpath 'com.android.tools.build:gradle:3.2.0'
 
-        //Replugin的 host 依赖
-        classpath "com.qihoo360.replugin:replugin-host-gradle:$replugin_version"
+        //Replugin：host、plugin的gradle插件依赖
+        if (isRepluginGradleUseNative.toBoolean()) {
+            //用本地源码编译
+            classpath "com.qihoo360.replugin.local:replugin-host-gradle:$replugin_version"
+            classpath "com.qihoo360.replugin.local:replugin-plugin-gradle:$replugin_version"
+        } else {
+            classpath "com.qihoo360.replugin:replugin-host-gradle:$replugin_version"
+            classpath "com.qihoo360.replugin:replugin-plugin-gradle:$replugin_version"
+        }
 
-        //Replugin的 plugin 依赖
-        classpath "com.qihoo360.replugin:replugin-plugin-gradle:$replugin_version"
+//        classpath "io.github.froyohuang:replugin-host-gradle-androidx:2.3.3.0"
+//        classpath "io.github.froyohuang:replugin-plugin-gradle-androidx:2.3.3.0"
 
         //kotlin的gradle插件依赖
 //        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -28,9 +48,25 @@ buildscript {
 
 allprojects {
     repositories {
+        if (isRepluginGradleUseNative.toBoolean()) {
+            maven {
+                url uri('./RePluigHostLocalRepo')
+            }
+            maven {
+                url uri('./RePluigPluginLocalRepo')
+            }
+        }
+
+//        maven{
+//            url "https://dl.bintray.com/froyo-github/Replugin-AndroidX"
+//        }
+
         google()
         jcenter()
 
+        flatDir {
+            dirs project(':host').file('libs/')
+        }
     }
 }
 

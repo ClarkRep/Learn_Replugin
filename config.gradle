@@ -1,5 +1,4 @@
 ext {
-
     android = [
             compileOptionsEncoding: "UTF-8",
             // 编译SDK的版本
@@ -15,18 +14,29 @@ ext {
             versionCode      : 20004300,
             hostApplicationId: "com.clark.learn.replugin.host",
     ]
-
     dependencies = [
-
-            androidXAppcompat            : 'androidx.appcompat:appcompat:1.1.0',
+            //Constraintlayout布局资源
             androidXConstraintlayout     : 'androidx.constraintlayout:constraintlayout:1.1.3',
-            androidXMaterial             : 'com.google.android.material:material:1.1.0',
-            androidXLocalbroadcastmanager: 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0',
 
-            androidXSupportV4            : "androidx.legacy:legacy-support-v4:1.0.0",
+            //V4、V7、AppCompat依赖
+            androidXSupportV4            : 'androidx.legacy:legacy-support-v4:1.0.0',
             androidXSupportV7            : 'androidx.appcompat:appcompat:1.0.0',
-            androidXLifecycleViewmodle   : "androidx.lifecycle:lifecycle-viewmodel:2.1.0",
-            androidXSavedstate           : "androidx.savedstate:savedstate:1.0.0",
-            androidXActivity             : "androidx.activity:activity:1.0.0",
+
+            androidXMaterial             : 'com.google.android.material:material:1.1.0',
+            androidXLocalbroadcastmanager: 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0',
+
+
+
+            androidXActivity             : 'androidx.activity:activity:1.1.0',
+            androidXSavedstate           : 'androidx.savedstate:savedstate:1.0.0',
+            androidXLifecycleViewmodle   : 'androidx.lifecycle:lifecycle-viewmodel:2.0.0',
+            androidXLifecycleCommon      : 'androidx.lifecycle:lifecycle-common:2.0.0',
+
+            //广告插件库
+            repluginHostLib              : project(':replugin-host-lib'),
+            repluginPluginLib            : project(':replugin-plugin-lib')
+//            repluginHostLib              : "androidx.activity:activity:1.0.0",
+//            repluginPluginLib            : "androidx.activity:activity:1.0.0"
     ]
+
 }

@@ -11,7 +11,7 @@
         android:id="@+id/btn_click1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="安装插件1，跳转插件Activity"
+        android:text="安装插件1，跳转宿主Activity，在宿主Activity添加插件的Fragment"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -21,7 +21,7 @@
         android:id="@+id/btn_click2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="安装插件1，跳转宿主Activity，在宿主Activity添加插件的Fragment"
+        android:text="安装插件1，跳转宿主Activity，在宿主Activity里添加插件的View"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -31,7 +31,7 @@
         android:id="@+id/btn_click3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="安装插件1，跳转插件Activity，在插件Activity添加插件的Fragment"
+        android:text="在宿主中，测试使用PendingIntent启动宿主的Activity"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -41,11 +41,40 @@
         android:id="@+id/btn_click4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="安装插件1，跳转宿主Activity，在宿主Activity里添加插件的View"
+        android:text="安装插件1，跳转插件Activity"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/btn_click5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="安装插件1，跳转插件Activity，在插件Activity添加插件的Fragment"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_click6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="安装插件1，跳转插件Activity，测试在插件Activity中使用PendingIntent跳转插件Activity能否成功"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_click7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="安装插件1，跳转宿主Activity，在宿主Activity加载Fragment，该Fragment使用插件的代理类实现功能。"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </LinearLayout>

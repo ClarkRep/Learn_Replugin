@@ -26,7 +26,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".host.TestAddPluginViewActivity"
+            android:name=".host.TestPluginInterfaceImplActivity"
             android:screenOrientation="portrait" />
 
         <!--这个Activity声明是为了欺骗部分SDK校验四大组件是否在清单文件中声明-->
@@ -43,6 +43,14 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/fileprovider_path" />
         </provider>
+
+<!--        <activity-->
+<!--            android:name="com.clark.learn.replugin.plugindemo1.TestClassNameActivity"-->
+<!--            android:screenOrientation="portrait" />-->
+
+        <activity
+            android:name=".host.TestPluginFragmentViewActivity"
+            android:screenOrientation="portrait" />
 
     </application>
 

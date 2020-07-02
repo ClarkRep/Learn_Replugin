@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="我是 plugindemo1 里面的 TestClassNameActivity" />
+
+    <Button
+        android:id="@+id/btn_click1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="使用 class 启动插件的 PluginFragmentActivity" />
+
+    <Button
+        android:id="@+id/btn_click2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="使用 PendingIntent 启动插件的 PluginFragmentActivity" />
+
+</LinearLayout>

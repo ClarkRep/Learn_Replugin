@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.qihoo360.replugin.local</groupId>
+  <artifactId>replugin-host-gradle</artifactId>
+  <versioning>
+    <release>2.3.3</release>
+    <versions>
+      <version>2.3.3</version>
+    </versions>
+    <lastUpdated>20200628085703</lastUpdated>
+  </versioning>
+</metadata>

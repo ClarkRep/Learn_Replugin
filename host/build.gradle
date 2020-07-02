@@ -46,18 +46,11 @@ repluginHostConfig {
 }
 
 dependencies {
+    implementation libraries.repluginHostLib
 
     implementation files('libs/test.jar')
 
-//    implementation(name: 'library-release', ext: 'aar')
-
-    //该库是修改replugin host gradle源码后编译的库（replugin自身bug导致编译失败），暂时放在本地，后续优化
-//    implementation "com.qihoo360.replugin:replugin-host-lib:$replugin_version"
-    implementation project(':RepluginHostLib')
-
-    implementation libraries.androidXAppcompat
     implementation libraries.androidXConstraintlayout
-    implementation libraries.androidXLocalbroadcastmanager
     implementation libraries.androidXSupportV4
-
+    implementation libraries.androidXSupportV7
 }

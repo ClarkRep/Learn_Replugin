@@ -1,0 +1,39 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml:17:1-23:12
+INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml:17:1-23:12
+INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml:17:1-23:12
+INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml:17:1-23:12
+INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml:17:1-23:12
+INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml:17:1-23:12
+INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml:17:1-23:12
+	package
+		ADDED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml:18:5-44
+		INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml
+		INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml
+		ADDED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml:17:1-23:12
+		INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml
+	android:versionCode
+		INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml
+		ADDED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml:17:1-23:12
+		INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml:17:11-69
+application
+ADDED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml:20:5-21:19
+uses-sdk
+INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml
+INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml
+INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml
+INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml
+		ADDED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml
+		INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml
+		ADDED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml
+		INJECTED from /Users/clark/StudioProjects/Learn_Replugin/replugin-plugin-lib/src/main/AndroidManifest.xml

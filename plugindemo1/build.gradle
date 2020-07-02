@@ -32,11 +32,12 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    configurations {
-        /* 所有插件排除 fragment 依赖 */
-        all*.exclude group: 'androidx.fragment', module: 'fragment'
-//        all*.exclude group: 'androidx.vectordrawable'
-    }
+    //移除插件里面的Fragment引用
+//    configurations {
+//        /* 所有插件排除 fragment 依赖 */
+//        all*.exclude group: 'androidx.fragment', module: 'fragment'
+////        all*.exclude group: 'androidx.vectordrawable'
+//    }
 
     //这里移除宿主里面的类，但是被直接引用的删除不掉
 //    applicationVariants.all { variant ->
@@ -58,30 +59,35 @@ repositories {
     }
 }
 
-// 这个plugin需要放在android配置之后，因为需要读取android中的配置项
-apply plugin: 'replugin-plugin-gradle'
-repluginPluginConfig {
-    pluginName = "plugindemo1plugindemo1.apk"
-    hostApplicationId = versions.hostApplicationId
-    hostAppLauncherActivity = "com.clark.learn.replugin.host.MainActivity"
-}
-
 dependencies {
     //360插件库依赖
-//    implementation "com.qihoo360.replugin:replugin-plugin-lib:$replugin_version"
-    implementation project(':RepluginPluginLib')
+    implementation libraries.repluginPluginLib
 
-    compileOnly files('libs/androidx-fragment-1.0.0.jar')
+    implementation libraries.androidXConstraintlayout
+
+//    implementation libraries.androidXSupportV4
+//    implementation libraries.androidXSupportV7
 
     compileOnly files('libs/test.jar')
 
-    implementation(libraries.androidXAppcompat, {
-        exclude group: 'androidx.fragment', module: 'fragment'
-    })
+    /*
+    以下是依赖让插件 compileOnly v4包的Fragment库，这样可以骗过编译期，让宿主可以加载插件的Fragment。
+    但是有严重问题，插件里面凡事继承了FragmentActivity或者其子类的话，在插件中直接使用常规Intent方式跳转的话就跳转不了。
+      */
+    compileOnly files('libs/androidx-fragment-1.1.0.jar')
+    compileOnly files('libs/androidx-activity-1.1.0.jar')
+    compileOnly files('libs/androidx-lifecycle-viewmodel-2.2.0.jar')
+    compileOnly files('libs/androidx-savedstate-savedstate-1.0.0.jar')
+    compileOnly files('libs/androidx-core-1.1.0.jar')
+    compileOnly files('libs/androidx-lifecycle-runtime-2.2.0.jar')
+    compileOnly files('libs/androidx-lifecycle-common-2.2.0.jar')
 
-    implementation libraries.androidXConstraintlayout
-    implementation libraries.androidXLifecycleViewmodle
-    implementation libraries.androidXSavedstate
-    implementation libraries.androidXActivity
+}
 
+// 这个plugin需要放在android配置之后，因为需要读取android中的配置项
+apply plugin: 'replugin-plugin-gradle'
+repluginPluginConfig {
+    pluginName = "plugindemo1"
+    hostApplicationId = versions.hostApplicationId
+    hostAppLauncherActivity = "com.clark.learn.replugin.host.MainActivity"
 }

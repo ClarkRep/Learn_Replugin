@@ -25,11 +25,11 @@ public class MainActivity extends FragmentActivity {
 
         //需要使用这种方式去加载View。
         Context context = RePlugin.getPluginContext();
-        View inflate = LayoutInflater.from(context).inflate(R.layout.plugin_activity_main, null);
+        View inflate = LayoutInflater.from(context).inflate(R.layout.activity_main, null);
         setContentView(inflate);
 
         PackageManager packageManager = context.getPackageManager();
-        Intent intent = new Intent(context, PluginFragmentActivity.class);
+        Intent intent = new Intent(context, TestFragmentActivity.class);
         if (null != packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY)) {
             Log.d("haha", "匹配上了");
         } else {

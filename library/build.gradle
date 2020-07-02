@@ -26,8 +26,15 @@ android {
     }
 }
 
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    compileOnly files('libs/androidx-fragment-1.1.0.jar')
 
 //    implementation libraries.androidXAppcompat
 //    implementation libraries.androidXConstraintlayout
@@ -48,7 +55,7 @@ dependencies {
 
 //打包jar
 task clearJar(type: Delete) {
-    delete 'build/test.jar' //jar包的名字，随便命名
+    delete 'build/libs/test.jar' //jar包的名字，随便命名
 }
 task makeJar(type: org.gradle.api.tasks.bundling.Jar) {
     //指定生成的jar名
