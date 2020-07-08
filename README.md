@@ -9,9 +9,14 @@
 * plugin 插件库：replugin-plugin-gradle，编译后的本地gradle插件库：RepluginPluginLocalRepo
 * plugin 依赖库：replugin-plugin-lib
 
+Demo结构：
+* host：宿主project，用来加载插件、调试插件
+* plugindemo1：插件project，用来生成给宿主使用的插件apk，该apk无法独立运行
+* library：用来生成test.jar的module，生成的test.jar作为宿主和插件的中间桥梁，实现宿主和插件的通信。
+
 参考资料：
-* 官方资料：[RePlugin](https://github.com/Qihoo360/RePlugin)
-* 参考资料：[RePlugin-AndroidX](https://github.com/froyohuang/RePlugin-AndroidX)
+* 官方项目：[RePlugin](https://github.com/Qihoo360/RePlugin)
+* 参考项目：[RePlugin-AndroidX](https://github.com/froyohuang/RePlugin-AndroidX)
 
 
 ## 原理分析
