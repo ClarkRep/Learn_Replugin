@@ -10,7 +10,7 @@ replugin-host-gradle，针对宿主应用编译期的注入任务：
 * RePluginHostConfigCreator - 生成 RepluginHostConfig 类，方便插件框架读取并自定义其属性
 * PluginBuiltinJsonCreator - 生成 plugins-builtin.json，json中含有插件应用的信息，包名，插件名，插件路径等。  
 
-下面是host Replugin插件的部分代码：
+下面是replugin-host-gradle中 Replugin.groovy 插件的部分代码：
 ```
     @Override
     public void apply(Project project) {
@@ -51,7 +51,7 @@ replugin-host-gradle，针对宿主应用编译期的注入任务：
                 }
                 generateHostConfigTask.group = AppConstant.TASKS_GROUP
 
-                //1.2、rpGenerateHostConfig依赖系统的generateBuildConfigTask。
+                //1.2、rpGenerateHostConfig 依赖系统的 generateBuildConfigTask。
                 //depends on build config task
                 if (generateBuildConfigTask) {
                     generateHostConfigTask.dependsOn generateBuildConfigTask
@@ -68,7 +68,7 @@ replugin-host-gradle，针对宿主应用编译期的注入任务：
                 }
                 generateBuiltinJsonTask.group = AppConstant.TASKS_GROUP
 
-                //3.2、rpGenerateBuiltinJson依赖系统 mergeAssetsTask 执行之后执行（因为生成插件Json信息，需要读取assets下面的插件信息）。
+                //3.2、rpGenerateBuiltinJson 依赖系统 mergeAssetsTask 执行之后执行（因为生成插件Json信息，需要读取assets下面的插件信息）。
                 //depends on mergeAssets Task
                 def mergeAssetsTask = VariantCompat.getMergeAssetsTask(variant)
                 if (mergeAssetsTask) {
