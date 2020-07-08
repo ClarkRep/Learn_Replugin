@@ -1,4 +1,4 @@
-# 针对Replugin进行AndroidX改造
+# Replugin的AndroidX适配
 
 由于官方的Replugin项目不是基于AndroidX开发的，所以对于已经AndroidX的应用不兼容，所以我们这个项目是针对Replugin进行了AndroidX的改造，使基于AndroidX开发的项目也可以使用Replugin进行插件化。
 * 本Demo基于Replugin2.3.3版本改造，将Replugin的host的gradle插件库、host依赖库、plugin的gradle插件库、plugin依赖库进行了AndroidX的适配。
