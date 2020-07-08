@@ -92,8 +92,6 @@ replugin-host-gradle，针对宿主应用编译期的注入任务：
             }
         }
     }
-
-
 ```
 
 详细内容可以自己阅读源码，或者看下面的参考资料：  
@@ -125,6 +123,7 @@ replugin-plugin-gradle，针对插件应用编译期的注入任务：
 }
 
 ```
+
 再看看 ReClassTransform 里面的部分源码：
 ```
     @Override
@@ -134,8 +133,9 @@ replugin-plugin-gradle，针对插件应用编译期的注入任务：
                    TransformOutputProvider outputProvider,
                    boolean isIncremental) throws IOException, TransformException, InterruptedException {
         
-      
+        ...
         
+        //这里会遍历所有的 Injectors，对Activity、Service等进行依赖关系的继承改造。
         def injectors = includedInjectors(config, variantDir)
         if (injectors.isEmpty()) {
             copyResult(inputs, outputProvider) // 跳过 reclass
@@ -143,6 +143,134 @@ replugin-plugin-gradle，针对插件应用编译期的注入任务：
             doTransform(inputs, outputProvider, config, injectors) // 执行 reclass
         }
     }
+    
+   /**
+     * 返回用户未忽略的注入器的集合
+     */
+    def includedInjectors(def cfg, String variantDir) {
+        def injectors = []
+        Injectors.values().each {
+            //设置project
+            it.injector.setProject(project)
+            //设置variant关键dir
+            it.injector.setVariantDir(variantDir)
+            if (!(it.nickName in cfg.ignoredInjectors)) {
+                injectors << it.nickName
+            }
+        }
+        injectors
+    }
+
+```
+
+再看看Injectors里面有哪些注入器：
+
+```
+public enum Injectors {
+
+    LOADER_ACTIVITY_CHECK_INJECTOR('LoaderActivityInjector', new LoaderActivityInjector(), '替换 Activity 为 LoaderActivity'),
+    LOCAL_BROADCAST_INJECTOR('LocalBroadcastInjector', new LocalBroadcastInjector(), '替换 LocalBroadcast 调用'),
+    PROVIDER_INJECTOR('ProviderInjector', new ProviderInjector(), '替换 Provider 调用'),
+    PROVIDER_INJECTOR2('ProviderInjector2', new ProviderInjector2(), '替换 ContentProviderClient 调用'),
+    GET_IDENTIFIER_INJECTOR('GetIdentifierInjector', new GetIdentifierInjector(), '替换 Resource.getIdentifier 调用')
+
+    IClassInjector injector
+    String nickName
+    String desc
+
+    Injectors(String nickName, IClassInjector injector, String desc) {
+        this.injector = injector
+        this.nickName = nickName
+        this.desc = desc;
+    }
+}
+```
+
+我们看看 LoaderActivityInjector 做了什么工作：
+```
+    /* LoaderActivity 替换规则 */
+    def private static loaderActivityRules = [
+            'android.app.Activity'                    : 'com.qihoo360.replugin.loader.a.PluginActivity',
+            'android.app.TabActivity'                 : 'com.qihoo360.replugin.loader.a.PluginTabActivity',
+            'android.app.ListActivity'                : 'com.qihoo360.replugin.loader.a.PluginListActivity',
+            'android.app.ActivityGroup'               : 'com.qihoo360.replugin.loader.a.PluginActivityGroup',
+            'androidx.fragment.app.FragmentActivity'  : 'com.qihoo360.replugin.loader.a.PluginFragmentActivity',
+            'androidx.appcompat.app.AppCompatActivity': 'com.qihoo360.replugin.loader.a.PluginAppCompatActivity',
+            'android.preference.PreferenceActivity'   : 'com.qihoo360.replugin.loader.a.PluginPreferenceActivity',
+            'android.app.ExpandableListActivity'      : 'com.qihoo360.replugin.loader.a.PluginExpandableListActivity'
+    ]
+```
+
+这里可以看到，plugin的插件会在编译期，将Activity的依赖关系进行映射表规则的修改，而修改后的XXPluginActivity，则会重写原先继承的Activity的一些方法，保证在插件里面的Activiy功能的正常使用：
+```
+public abstract class PluginActivity extends Activity {
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        newBase = RePluginInternal.createActivityContext(this, newBase);
+        super.attachBaseContext(newBase);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        //
+        RePluginInternal.handleActivityCreateBefore(this, savedInstanceState);
+        super.onCreate(savedInstanceState);
+        //
+        RePluginInternal.handleActivityCreate(this, savedInstanceState);
+    }
+
+    @Override
+    protected void onDestroy() {
+        //
+        RePluginInternal.handleActivityDestroy(this);
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        //
+        RePluginInternal.handleRestoreInstanceState(this, savedInstanceState);
+
+        try {
+            super.onRestoreInstanceState(savedInstanceState);
+        } catch (Throwable e) {
+            // Added by Jiongxuan Zhang
+            // Crash Hash: B1F67129BC6A67C882AF2BBE62202BF0
+            // java.lang.IllegalArgumentException: Wrong state class异常
+            // 原因：恢复现场时，Activity坑位找错了。通常是用于占坑的Activity的层级过深导致
+            // 举例：假如我们只有一个坑位可用，A和B分别是清理和通讯录的两个Activity
+            //      如果进程重启，系统原本恢复B，却走到了A，从而出现此问题
+            // 解决：将其Catch住，这样系统在找ViewState时不会出错。
+            // 后遗症：
+            // 1、可能无法恢复系统级View的保存的状态；
+            // 2、如果自己代码处理不当，可能会出现异常。故自己代码一定要用SecExtraUtils来获取Bundle数据
+            if (LogRelease.LOGR) {
+                LogRelease.e("PluginActivity", "o r i s: p=" + getPackageCodePath() + "; " + e.getMessage(), e);
+            }
+        }
+    }
+
+    @Override
+    public void startActivity(Intent intent) {
+        //
+        if (RePluginInternal.startActivity(this, intent)) {
+            // 这个地方不需要回调startActivityAfter，因为Factory2最终还是会回调回来，最终还是要走super.startActivity()
+            return;
+        }
+        super.startActivity(intent);
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        //
+        if (RePluginInternal.startActivityForResult(this, intent, requestCode)) {
+            // 这个地方不需要回调startActivityAfter，因为Factory2最终还是会回调回来，最终还是要走super.startActivityForResult()
+            return;
+        }
+        super.startActivityForResult(intent, requestCode);
+    }
+}
 
 ```
 
