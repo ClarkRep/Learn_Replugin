@@ -41,7 +41,7 @@ replugin-host-gradle，针对宿主应用编译期的注入任务：
                 def variantData = variant.variantData
                 def scope = variantData.scope
 
-                //1.1、创建读取宿主插件配置信息的rpGenerateHostConfig的Task。
+                //1.1、创建读取宿主插件配置信息的的Task - rpGenerateHostConfig。
                 //host generate task
                 def generateHostConfigTaskName = scope.getTaskName(AppConstant.TASK_GENERATE, "HostConfig")
                 def generateHostConfigTask = project.task(generateHostConfigTaskName)
@@ -58,7 +58,7 @@ replugin-host-gradle，针对宿主应用编译期的注入任务：
                     generateBuildConfigTask.finalizedBy generateHostConfigTask
                 }
 
-                //3.1、创建读取宿主assets中插件信息，并生成Json文件的Task：rpGenerateBuiltinJson。
+                //3.1、创建读取宿主assets中插件信息，并生成Json文件的Task - rpGenerateBuiltinJson。
                 //json generate task
                 def generateBuiltinJsonTaskName = scope.getTaskName(AppConstant.TASK_GENERATE, "BuiltinJson")
                 def generateBuiltinJsonTask = project.task(generateBuiltinJsonTaskName)
