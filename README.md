@@ -5,11 +5,19 @@
 * 本Demo基于Replugin2.3.3版本改造，将Replugin的**host的gradle插件库**、**host依赖库**、**plugin的gradle插件库**、**plugin依赖库**进行了AndroidX的适配。  
 * 本Demo的**host的gradle插件库**、**host依赖库**、**plugin的gradle插件库**、**plugin依赖库**是拷贝了Replugin 2.3.3版本的SDK，使用本地依赖进行编译。
 
-本地库：
+对Replugin进行AndroidX改造的点：
+* 修改 replugin-plugin-gradle 中ManifestAPI，使其能够在高版本gradle api下成功获取对应manifest文件；
+* 修改 replugin-plugin-gradle 中LoaderActivityInjector，使其能够匹配androidx包下的FragmentAcvitiy和AppCompatActivity，并进行替换；
+* 修改 replugin-plugin-gradle 中LocalBroadcastExprEditor和LocalBroadcastInjector里的LocalBroadcastManager为对应AndroidX类路径；
+* 修改 replugin-plugin-library 中的PluginFragmentActivity和PluginAppCompatActivity继承AndroidX包中的对应Activity；
+* 修改 replugin-plugin-library 中的PluginLocalBroadcastManager中反射获取LocalBroadcastManager时使用AndroidX包中的对应的类名；
+* 修改 replugin-host-library 中各处对LocalBroadcastManager的引用，改为引用AndroidX包中的类。
+
+本地库的对应关系：
 * host 插件库：replugin-host-gradle，编译后的本地gradle插件库：RepluginHostLocalRepo
-* host 依赖库：replugin-host-lib
+* host 依赖库：replugin-host-library
 * plugin 插件库：replugin-plugin-gradle，编译后的本地gradle插件库：RepluginPluginLocalRepo
-* plugin 依赖库：replugin-plugin-lib
+* plugin 依赖库：replugin-plugin-library
 
 Demo结构：
 * host：宿主project，用来加载插件、调试插件
