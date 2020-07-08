@@ -1,7 +1,9 @@
 # Learn_Replugin
 
-360的Replugin框架研究案例，这个Demo基于Replugin2.3.3版本改造，将Replugin的**host的gradle插件库**、**host依赖库**、**plugin的gradle插件库**、**plugin依赖库**进行了AndroidX的适配。  
-这个demo的**host的gradle插件库**、**host依赖库**、**plugin的gradle插件库**、**plugin依赖库**是拷贝了Replugin 2.3.3版本的SDK，使用本地依赖进行编译。
+360的Replugin框架研究案例 
+* 由于官方的Replugin项目不是基于AndroidX开发的，所以对于已经AndroidX的应用不兼容，所以我们这个项目是针对Replugin进行了AndroidX的改造，使AndroidX的项目也可以使用Replugin进行插件化。  
+* 本Demo基于Replugin2.3.3版本改造，将Replugin的**host的gradle插件库**、**host依赖库**、**plugin的gradle插件库**、**plugin依赖库**进行了AndroidX的适配。  
+* 本Demo的**host的gradle插件库**、**host依赖库**、**plugin的gradle插件库**、**plugin依赖库**是拷贝了Replugin 2.3.3版本的SDK，使用本地依赖进行编译。
 
 本地库：
 * host 插件库：replugin-host-gradle，编译后的本地gradle插件库：RepluginHostLocalRepo
@@ -19,9 +21,9 @@ Demo结构：
 * 参考项目：[RePlugin-AndroidX](https://github.com/froyohuang/RePlugin-AndroidX)
 
 
-## 原理分析
+## 一、原理分析
 
-* [Replugin插件编译期做了什么？](https://github.com/Qihoo360/RePlugin)
-* [Replugin的核心：HooK ClassLoader](https://github.com/Qihoo360/RePlugin)
+* [1.1：Replugin插件编译期做了什么？](README1_1.md)
+* [1.2：Replugin的核心：HooK ClassLoader](README1_2.md)
 
 ## Demo讲解
