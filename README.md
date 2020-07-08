@@ -6,11 +6,12 @@
 * 本Demo的**host的gradle插件库**、**host依赖库**、**plugin的gradle插件库**、**plugin依赖库**是拷贝了Replugin 2.3.3版本的SDK，使用本地依赖进行编译。
 
 对Replugin进行AndroidX改造的点：
-* 修改 replugin-plugin-gradle 中LoaderActivityInjector，使其能够匹配androidx包下的FragmentAcvitiy和AppCompatActivity，并进行替换；
-* 修改 replugin-plugin-gradle 中LocalBroadcastExprEditor和LocalBroadcastInjector里的LocalBroadcastManager为对应AndroidX类路径；
-* 修改 replugin-plugin-library 中的PluginFragmentActivity和PluginAppCompatActivity继承AndroidX包中的对应Activity；
-* 修改 replugin-plugin-library 中的PluginLocalBroadcastManager中反射获取LocalBroadcastManager时使用AndroidX包中的对应的类名；
-* 修改 replugin-host-library 中各处对LocalBroadcastManager的引用，改为引用AndroidX包中的类。
+* 将 replugin-host-library 和 replugin-plugin-library 库中的 build.gradle 对 support 包的引用修改成对应AndroidX的包引用，并且修改里面所有的导包；
+* 修改 replugin-plugin-gradle 中 LoaderActivityInjector，使其能够匹配Androidx包下的FragmentAcvitiy和AppCompatActivity，并进行替换；
+* 修改 replugin-plugin-gradle 中 LocalBroadcastExprEditor 和 LocalBroadcastInjector 里的 LocalBroadcastManager 为对应AndroidX类路径；
+* 修改 replugin-plugin-library 中的 PluginFragmentActivity 和 PluginAppCompatActivity 继承AndroidX包中的对应Activity；
+* 修改 replugin-plugin-library 中的 PluginLocalBroadcastManager 中反射获取 LocalBroadcastManager 时使用AndroidX包中的对应的类名；
+* 修改 replugin-host-library 中各处对 LocalBroadcastManager 的引用，改为引用AndroidX包中的类。
 
 本地库的对应关系：
 * host 插件库：replugin-host-gradle，编译后的本地gradle插件库：RepluginHostLocalRepo
