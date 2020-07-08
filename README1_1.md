@@ -1,7 +1,11 @@
 # Replugin插件编译期做了什么？
 
-这里主要讲解一下Replugin在编译期做了哪些事情，才能使宿主去加载插件的四大组件。Replugin在编译期做的，分别通过replugin-host-gradle、replugin-plugin-gradle这两个gradle插件，对宿主和插件项目进行编译期的改造。  
-下面会从宿主和插件两个纬度去分析一下编译期的具体工作。
+预备知识，Replugin的host和plugin插件，都是依赖APK编译期的一些task进行插桩的生成、插件信息的获取、继承关系的改造等操作，所以需要提前了解一些APK的打包任务，可以参考下面这篇文章：  
+[【Android 修炼手册】Android Gradle Plugin 主要 Task 分析](https://zhuanlan.zhihu.com/p/67049158)
+
+在这里主要讲解一下Replugin在编译期做了哪些事情，才能使宿主去加载插件的四大组件。Replugin在编译期做的，分别通过replugin-host-gradle、replugin-plugin-gradle这两个gradle插件，对宿主和插件项目进行编译期的改造。  
+接下来会从宿主和插件两个纬度去分析一下编译期的具体工作。
+
   
 ## 宿主的编译期
 
