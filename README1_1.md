@@ -10,6 +10,88 @@ replugin-host-gradle，针对宿主应用编译期的注入任务：
 * RePluginHostConfigCreator - 生成 RepluginHostConfig 类，方便插件框架读取并自定义其属性
 * PluginBuiltinJsonCreator - 生成 plugins-builtin.json，json中含有插件应用的信息，包名，插件名，插件路径等。  
 
+下面是host Replugin插件的部分代码：
+```
+    @Override
+    public void apply(Project project) {
+        println "${TAG} Welcome to replugin world ! "
+
+        this.project = project
+
+        /* Extensions */
+        project.extensions.create(AppConstant.USER_CONFIG, RepluginConfig)
+
+        if (project.plugins.hasPlugin(AppPlugin)) {
+
+            def android = project.extensions.getByType(AppExtension)
+            android.applicationVariants.all { variant ->
+
+                addShowPluginTask(variant)
+
+                if (config == null) {
+                    config = project.extensions.getByName(AppConstant.USER_CONFIG)
+                    checkUserConfig(config)
+                }
+
+                def generateBuildConfigTask = VariantCompat.getGenerateBuildConfigTask(variant)
+                def appID = generateBuildConfigTask.appPackageName
+                def newManifest = ComponentsGenerator.generateComponent(appID, config)
+                println "${TAG} countTask=${config.countTask}"
+
+                def variantData = variant.variantData
+                def scope = variantData.scope
+
+                //1.1、创建读取宿主插件配置信息的rpGenerateHostConfig的Task。
+                //host generate task
+                def generateHostConfigTaskName = scope.getTaskName(AppConstant.TASK_GENERATE, "HostConfig")
+                def generateHostConfigTask = project.task(generateHostConfigTaskName)
+
+                generateHostConfigTask.doLast {
+                    FileCreators.createHostConfig(project, variant, config)
+                }
+                generateHostConfigTask.group = AppConstant.TASKS_GROUP
+
+                //1.2、rpGenerateHostConfig依赖系统的generateBuildConfigTask。
+                //depends on build config task
+                if (generateBuildConfigTask) {
+                    generateHostConfigTask.dependsOn generateBuildConfigTask
+                    generateBuildConfigTask.finalizedBy generateHostConfigTask
+                }
+
+                //3.1、创建读取宿主assets中插件信息，并生成Json文件的Task：rpGenerateBuiltinJson。
+                //json generate task
+                def generateBuiltinJsonTaskName = scope.getTaskName(AppConstant.TASK_GENERATE, "BuiltinJson")
+                def generateBuiltinJsonTask = project.task(generateBuiltinJsonTaskName)
+
+                generateBuiltinJsonTask.doLast {
+                    FileCreators.createBuiltinJson(project, variant, config)
+                }
+                generateBuiltinJsonTask.group = AppConstant.TASKS_GROUP
+
+                //3.2、rpGenerateBuiltinJson依赖系统 mergeAssetsTask 执行之后执行（因为生成插件Json信息，需要读取assets下面的插件信息）。
+                //depends on mergeAssets Task
+                def mergeAssetsTask = VariantCompat.getMergeAssetsTask(variant)
+                if (mergeAssetsTask) {
+                    generateBuiltinJsonTask.dependsOn mergeAssetsTask
+                    mergeAssetsTask.finalizedBy generateBuiltinJsonTask
+                }
+
+                variant.outputs.each { output ->
+                    //2、在宿主的 Manifest 合并完成之后，需要进行 Manifest 的插桩操作。
+                    VariantCompat.getProcessManifestTask(output).doLast {
+                        println "${AppConstant.TAG} processManifest: ${it.outputs.files}"
+                        it.outputs.files.each { File file ->
+                            updateManifest(file, newManifest)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+```
+
 详细内容可以自己阅读源码，或者看下面的参考资料：  
 参考资料：[《Replugin源码解析之replugin-host-gradle（宿主的gradle插件）》](https://www.jianshu.com/p/ca3bda0800b6)
 
