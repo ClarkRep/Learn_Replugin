@@ -135,7 +135,7 @@ replugin-plugin-gradle，针对插件应用编译期的注入任务：
         
         ...
         
-        //这里会遍历所有的 Injectors，对Activity、Service等进行依赖关系的继承改造。
+        //这里会遍历所有的 Injectors，这些Injectors会对Activity进行依赖关系的继承改造、Provider进行重定向等操作。
         def injectors = includedInjectors(config, variantDir)
         if (injectors.isEmpty()) {
             copyResult(inputs, outputProvider) // 跳过 reclass
