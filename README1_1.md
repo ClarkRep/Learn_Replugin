@@ -109,5 +109,43 @@ replugin-plugin-gradle，针对插件应用编译期的注入任务：
 * ProviderInjector2 - 替换插件中的 ContentProviderClient 调用代码 为 插件库的调用代码
 * GetIdentifierInjector - 替换插件中的 Resource.getIdentifier 调用代码的参数为动态适配的参数
 
+下面是 replugin-plugin-gradle 中的 ReClassPlugin.groovy 部分源码：
+```
+    @Override
+    public void apply(Project project) {
+            
+            ...
+       
+            //这里会生成 ReClassTransform
+            def transform = new ReClassTransform(project)
+            // 将 transform 注册到 android
+            android.registerTransform(transform)
+        }
+    }
+}
+
+```
+再看看 ReClassTransform 里面的部分源码：
+```
+    @Override
+    void transform(Context context,
+                   Collection<TransformInput> inputs,
+                   Collection<TransformInput> referencedInputs,
+                   TransformOutputProvider outputProvider,
+                   boolean isIncremental) throws IOException, TransformException, InterruptedException {
+        
+      
+        
+        def injectors = includedInjectors(config, variantDir)
+        if (injectors.isEmpty()) {
+            copyResult(inputs, outputProvider) // 跳过 reclass
+        } else {
+            doTransform(inputs, outputProvider, config, injectors) // 执行 reclass
+        }
+    }
+
+```
+
+
 详细内容可以自己阅读源码，或者看下面的参考资料：  
 参考资料：[《Replugin源码解析之replugin-plugin-gradle（插件的gradle插件）》](https://www.jianshu.com/p/a9b3aaba8e45)  
