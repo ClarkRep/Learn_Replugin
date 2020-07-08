@@ -6,7 +6,6 @@
 * 本Demo的**host的gradle插件库**、**host依赖库**、**plugin的gradle插件库**、**plugin依赖库**是拷贝了Replugin 2.3.3版本的SDK，使用本地依赖进行编译。
 
 对Replugin进行AndroidX改造的点：
-* 修改 replugin-plugin-gradle 中ManifestAPI，使其能够在高版本gradle api下成功获取对应manifest文件；
 * 修改 replugin-plugin-gradle 中LoaderActivityInjector，使其能够匹配androidx包下的FragmentAcvitiy和AppCompatActivity，并进行替换；
 * 修改 replugin-plugin-gradle 中LocalBroadcastExprEditor和LocalBroadcastInjector里的LocalBroadcastManager为对应AndroidX类路径；
 * 修改 replugin-plugin-library 中的PluginFragmentActivity和PluginAppCompatActivity继承AndroidX包中的对应Activity；
