@@ -11,7 +11,7 @@ replugin-host-gradle，针对宿主应用编译期的注入任务：
 * PluginBuiltinJsonCreator - 生成 plugins-builtin.json，json中含有插件应用的信息，包名，插件名，插件路径等。  
 
 详细内容可以自己阅读源码，或者看下面的参考资料：  
-参考资料：[《RePlugin源码解析之replugin-host-gradle（宿主gradle插件）》](https://www.jianshu.com/p/ca3bda0800b6)
+参考资料：[《Replugin源码解析之replugin-host-gradle（宿主的gradle插件）》](https://www.jianshu.com/p/ca3bda0800b6)
 
 ## 插件的编译期
 
@@ -24,4 +24,4 @@ replugin-plugin-gradle，针对插件应用编译期的注入任务：
 * GetIdentifierInjector - 替换插件中的 Resource.getIdentifier 调用代码的参数为动态适配的参数
 
 详细内容可以自己阅读源码，或者看下面的参考资料：  
-参考资料：[《RePlugin源码解析之replugin-plugin-gradle（插件的gradle插件）》](https://www.jianshu.com/p/a9b3aaba8e45)  
+参考资料：[《Replugin源码解析之replugin-plugin-gradle（插件的gradle插件）》](https://www.jianshu.com/p/a9b3aaba8e45)  
