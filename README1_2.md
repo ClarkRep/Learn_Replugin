@@ -138,6 +138,7 @@ Factory.startActivityWithNoInjectCN() -> activity = com.clark.learn.replugin.plu
 PluginCommImpl.startActivity() -> activity = com.clark.learn.replugin.plugindemo1.MainActivity
 PluginLibraryInternalProxy.startActivity() -> activity = com.clark.learn.replugin.plugindemo1.MainActivity
 PluginCommImpl.loadPluginActivity() -> activity = com.clark.learn.replugin.plugindemo1.MainActivity
+PluginCommImpl.getActivityInfo() -> plugin = plugindemo1，activity = com.clark.learn.replugin.plugindemo1.MainActivity
 
 //当启动插件的MainActivity的时候，回去获取加载 插件MainActivity 的具体信息，这时候回去加载插件并将插件的信息缓存。
 PmBase.loadPlugin(Plugin p, int loadType, boolean useCache)
@@ -145,6 +146,7 @@ Plugin.load()
 Plugin.loadLocked()
 Plugin.doLoad()
 Loader.loadDex()
+Loader.loadDex() -> 将插件所有的Activity信息存储到：Loader.mComponents.mActivities
 Loader.adjustPluginProcess() -> 调整插件组件的进程名称，appInfo = ApplicationInfo{802d2a3 com.clark.learn.replugin.plugindemo1}
 RePluginClassLoader.loadClass() -> className = com.qihoo360.plugin.plugindemo1.Entry
 PMF.loadClass() -> className = com.qihoo360.plugin.plugindemo1.Entry
@@ -154,6 +156,7 @@ PMF.loadClass() -> className = com.qihoo360.plugin.plugindemo1.Entry
 PmBase.loadClass() -> className = com.qihoo360.plugin.plugindemo1.Entry
 
 //将获取到的 插件MainActivity 和宿主的坑位Activity进行绑定。
+PluginCommImpl.getActivityInfo() -> 从 Loader.mComponents.mActivities 获取Activity信息
 PluginProcessPer.allocActivityContainer() -> target = com.clark.learn.replugin.plugindemo1.MainActivity
 PluginProcessPer.bindActivity() -> activity = com.clark.learn.replugin.plugindemo1.MainActivity
 PmBase.loadPlugin(Plugin p, int loadType, boolean useCache)
@@ -162,6 +165,7 @@ Plugin.loadLocked()
 PluginContainers.alloc() -> activity = com.clark.learn.replugin.plugindemo1.MainActivity
 PluginContainers.allocLocked() -> activity = com.clark.learn.replugin.plugindemo1.MainActivity，这里将宿主的坑位Activity和真正要启动的插件Activity做了一个绑定，并返回坑位Activity信息，让ClassLoader去启动坑位Activity。
 PluginProcessPer.bindActivity() -> 用插件的ClassLoader预加载真正要跳转的Activity：com.clark.learn.replugin.plugindemo1.MainActivity
+PluginProcessPer.bindActivity() -> 返回插件Activity com.clark.learn.replugin.plugindemo1.MainActivity 对应的宿主坑位Activity：com.clark.learn.replugin.host.loader.a.ActivityN1NRNTS5
 
 //当绑定完成之后，会去启动宿主的 坑位Activity，然后 RePluginClassLoader 会加载该坑位Activity真正映射到的插件MainActivity。
 PluginLibraryInternalProxy.startActivity() -> 启动坑位Activity = com.clark.learn.replugin.host.loader.a.ActivityN1NRNTS5
@@ -175,6 +179,11 @@ PluginContainers.lookupByContainer() -> 查询是否有绑定了坑位的Activit
 //找到了宿主坑位Activity所对应的插件MainActivity，这样真正启动的Activity就是 插件的MainActivity了。
 PluginContainers.lookupByContainer() -> 找到的绑定坑位ActivityState，activityState = ActivityState {container=com.clark.learn.replugin.host.loader.a.ActivityN1NRNTS5 state=occupied plugin=plugindemo1 activity=com.clark.learn.replugin.plugindemo1.MainActivity size=0}
 PluginProcessPer.resolveActivityClass() -> 找到坑位com.clark.learn.replugin.host.loader.a.ActivityN1NRNTS5映射到的插件Activity：com.clark.learn.replugin.plugindemo1.MainActivity
+PmBase.loadPlugin(Plugin p, int loadType, boolean useCache)
+Plugin.load()
+Plugin.loadLocked()
+PluginProcessPer.resolveActivityClass() -> 加载插件信息：plugin = plugindemo1
+PluginProcessPer.resolveActivityClass() -> 使用插件 plugindemo1 的ClassLoader加载插件中Activity的Class：com.clark.learn.replugin.plugindemo1.MainActivity
 
 ```
 
