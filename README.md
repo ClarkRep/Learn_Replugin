@@ -7,7 +7,8 @@
 Demo结构：
 * host：宿主project，用来加载插件、调试插件；
 * library：用来生成test.jar的module，生成的test.jar作为宿主和插件的中间桥梁，实现宿主和插件的通信；
-* plugindemo1：插件project，用来生成给宿主使用的插件apk，该apk无法直接运行；
+* plugindemo1：插件project，用来生成给宿主使用的插件apk；
+* plugindemo2：插件project，用来生成给宿主使用的插件apk；
 * replugin-host-gradle：host插件库
 * replugin-host-library：host依赖库
 * replugin-plugin-gradle：plugin插件库
