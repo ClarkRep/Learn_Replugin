@@ -1,10 +1,10 @@
 # 从启动插件Activity的角度来分析Replugin的核心：HooK ClassLoader
 Replugin的核心点就是Hook住了宿主的ClassLoader，它会使用自己的 RePluginClassLoader 替换了宿主的 ClassLoader，在loadClass的时候，就会优先去取插件里面的Class，则会调用原来的ClassLoader取加载Class。  
 这里会用宿主启动插件Activity的流程，来分析一下Hook ClassLoader的具体原理。  
-我们看一下replugin-host-library 的源码，从Replugin启动插件的Activity分析原理：
-* 宿主是如何 Hook 默认的ClassLoader；
-* 将宿主在 Manifest 注册的 坑位Activity 和 插件的Activity 进行绑定；
-* 启动 插件Activity 的时候，宿主 RePluginClassLoader 怎么将 坑位Activity 替换成 插件Activity 进行展示。
+带着下面的问题，我们来看一下replugin-host-library 的源码：
+* 宿主是如何 Hook ClassLoader？
+* 宿主在 Manifest 注册的 坑位Activity 和 插件的Activity 如何绑定的？
+* 启动 插件Activity 的时候，宿主 RePluginClassLoader 怎么将 坑位Activity 替换成 插件Activity 进行展示？
 
 ## Hook 宿主 ClassLoader
 在宿主继承 Application 的 attachBaseContext()方法，我们需要添加 Replugin 的注入：
@@ -131,7 +131,52 @@ Replugin的核心点就是Hook住了宿主的ClassLoader，它会使用自己的
 
 点击跳转插件Activity的按钮，然后再看看我们在 replugin-host-library 的一些关键位置打印的日志：
 
+```
+//启动 插件的MainActivity，以下是调用顺序
+RePlugin.startActivity() -> className = com.clark.learn.replugin.plugindemo1.MainActivity
+Factory.startActivityWithNoInjectCN() -> activity = com.clark.learn.replugin.plugindemo1.MainActivity
+PluginCommImpl.startActivity() -> activity = com.clark.learn.replugin.plugindemo1.MainActivity
+PluginLibraryInternalProxy.startActivity() -> activity = com.clark.learn.replugin.plugindemo1.MainActivity
+PluginCommImpl.loadPluginActivity() -> activity = com.clark.learn.replugin.plugindemo1.MainActivity
 
+//当启动插件的MainActivity的时候，回去获取加载 插件MainActivity 的具体信息，这时候回去加载插件并将插件的信息缓存。
+PmBase.loadPlugin(Plugin p, int loadType, boolean useCache)
+Plugin.load()
+Plugin.loadLocked()
+Plugin.doLoad()
+Loader.loadDex()
+Loader.adjustPluginProcess() -> 调整插件组件的进程名称，appInfo = ApplicationInfo{802d2a3 com.clark.learn.replugin.plugindemo1}
+RePluginClassLoader.loadClass() -> className = com.qihoo360.plugin.plugindemo1.Entry
+PMF.loadClass() -> className = com.qihoo360.plugin.plugindemo1.Entry
+PmBase.loadClass() -> className = com.qihoo360.plugin.plugindemo1.Entry
+RePluginClassLoader.loadClass() -> className = com.qihoo360.plugin.plugindemo1.Entry
+PMF.loadClass() -> className = com.qihoo360.plugin.plugindemo1.Entry
+PmBase.loadClass() -> className = com.qihoo360.plugin.plugindemo1.Entry
+
+//将获取到的 插件MainActivity 和宿主的坑位Activity进行绑定。
+PluginProcessPer.allocActivityContainer() -> target = com.clark.learn.replugin.plugindemo1.MainActivity
+PluginProcessPer.bindActivity() -> activity = com.clark.learn.replugin.plugindemo1.MainActivity
+PmBase.loadPlugin(Plugin p, int loadType, boolean useCache)
+Plugin.load()
+Plugin.loadLocked()
+PluginContainers.alloc() -> activity = com.clark.learn.replugin.plugindemo1.MainActivity
+PluginContainers.allocLocked() -> activity = com.clark.learn.replugin.plugindemo1.MainActivity，这里将宿主的坑位Activity和真正要启动的插件Activity做了一个绑定，并返回坑位Activity信息，让ClassLoader去启动坑位Activity。
+PluginProcessPer.bindActivity() -> 用插件的ClassLoader预加载真正要跳转的Activity：com.clark.learn.replugin.plugindemo1.MainActivity
+
+//当绑定完成之后，会去启动宿主的 坑位Activity，然后 RePluginClassLoader 会加载该坑位Activity真正映射到的插件MainActivity。
+PluginLibraryInternalProxy.startActivity() -> 启动坑位Activity = com.clark.learn.replugin.host.loader.a.ActivityN1NRNTS5
+RePluginClassLoader.loadClass() -> className = com.clark.learn.replugin.host.loader.a.ActivityN1NRNTS5
+PMF.loadClass() -> className = com.clark.learn.replugin.host.loader.a.ActivityN1NRNTS5
+PmBase.loadClass() -> className = com.clark.learn.replugin.host.loader.a.ActivityN1NRNTS5
+PmBase.loadClass() -> mContainerActivities.contains()
+PluginProcessPer.resolveActivityClass() -> className = com.clark.learn.replugin.host.loader.a.ActivityN1NRNTS5
+PluginContainers.lookupByContainer() -> 查询是否有绑定了坑位的Activity信息，className = com.clark.learn.replugin.host.loader.a.ActivityN1NRNTS5
+
+//找到了宿主坑位Activity所对应的插件MainActivity，这样真正启动的Activity就是 插件的MainActivity了。
+PluginContainers.lookupByContainer() -> 找到的绑定坑位ActivityState，activityState = ActivityState {container=com.clark.learn.replugin.host.loader.a.ActivityN1NRNTS5 state=occupied plugin=plugindemo1 activity=com.clark.learn.replugin.plugindemo1.MainActivity size=0}
+PluginProcessPer.resolveActivityClass() -> 找到坑位com.clark.learn.replugin.host.loader.a.ActivityN1NRNTS5映射到的插件Activity：com.clark.learn.replugin.plugindemo1.MainActivity
+
+```
 
 
 
