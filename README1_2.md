@@ -116,6 +116,7 @@ Replugin的核心点就是Hook住了宿主的ClassLoader，它会使用自己的
 * 通过反射，获取 mPackageInfo.mClassLoader；
 * 将 mPackageInfo.mClassLoader 作为参数，生成 Replugin 自定义的 RePluginClassLoader 对象；
 * 将新生成的 RePluginClassLoader 写入mPackageInfo.mClassLoader。   
+
 通过上面这些步骤，就实现了 Hook 住应用默认 ClassLoader，这样 Replugin 就可以通过使用自己的 RePluginClassLoader 去实现插件化方案了。
 
 
@@ -140,7 +141,7 @@ PluginLibraryInternalProxy.startActivity() -> activity = com.clark.learn.replugi
 PluginCommImpl.loadPluginActivity() -> activity = com.clark.learn.replugin.plugindemo1.MainActivity
 PluginCommImpl.getActivityInfo() -> plugin = plugindemo1，activity = com.clark.learn.replugin.plugindemo1.MainActivity
 
-//当启动插件的MainActivity的时候，回去获取加载 插件MainActivity 的具体信息，这时候回去加载插件并将插件的信息缓存。
+//当启动 插件MainActivity 的时候，会去加载插件，然后获取加载插件所有Activity的信息到：Loader.mComponents.mActivities。
 PmBase.loadPlugin(Plugin p, int loadType, boolean useCache)
 Plugin.load()
 Plugin.loadLocked()
@@ -155,7 +156,7 @@ RePluginClassLoader.loadClass() -> className = com.qihoo360.plugin.plugindemo1.E
 PMF.loadClass() -> className = com.qihoo360.plugin.plugindemo1.Entry
 PmBase.loadClass() -> className = com.qihoo360.plugin.plugindemo1.Entry
 
-//将获取到的 插件MainActivity 和宿主的坑位Activity进行绑定。
+//从Loader.mComponents.mActivities，将获取到的 插件MainActivity 信息和宿主的 坑位Activity 进行绑定。
 PluginCommImpl.getActivityInfo() -> 从 Loader.mComponents.mActivities 获取Activity信息
 PluginProcessPer.allocActivityContainer() -> target = com.clark.learn.replugin.plugindemo1.MainActivity
 PluginProcessPer.bindActivity() -> activity = com.clark.learn.replugin.plugindemo1.MainActivity
@@ -165,10 +166,12 @@ Plugin.loadLocked()
 PluginContainers.alloc() -> activity = com.clark.learn.replugin.plugindemo1.MainActivity
 PluginContainers.allocLocked() -> activity = com.clark.learn.replugin.plugindemo1.MainActivity，这里将宿主的坑位Activity和真正要启动的插件Activity做了一个绑定，并返回坑位Activity信息，让ClassLoader去启动坑位Activity。
 PluginProcessPer.bindActivity() -> 用插件的ClassLoader预加载真正要跳转的Activity：com.clark.learn.replugin.plugindemo1.MainActivity
-PluginProcessPer.bindActivity() -> 返回插件Activity com.clark.learn.replugin.plugindemo1.MainActivity 对应的宿主坑位Activity：com.clark.learn.replugin.host.loader.a.ActivityN1NRNTS5
 
-//当绑定完成之后，会去启动宿主的 坑位Activity，然后 RePluginClassLoader 会加载该坑位Activity真正映射到的插件MainActivity。
+//当绑定完成之后，会返回宿主的 坑位Activity，然后启动坑位Activity。
+PluginProcessPer.bindActivity() -> 返回插件Activity com.clark.learn.replugin.plugindemo1.MainActivity 对应的宿主坑位Activity：com.clark.learn.replugin.host.loader.a.ActivityN1NRNTS5
 PluginLibraryInternalProxy.startActivity() -> 启动坑位Activity = com.clark.learn.replugin.host.loader.a.ActivityN1NRNTS5
+
+//RePluginClassLoader 会加载该 坑位Activity 的时候，会去 坑位  真正映射到的插件MainActivity。
 RePluginClassLoader.loadClass() -> className = com.clark.learn.replugin.host.loader.a.ActivityN1NRNTS5
 PMF.loadClass() -> className = com.clark.learn.replugin.host.loader.a.ActivityN1NRNTS5
 PmBase.loadClass() -> className = com.clark.learn.replugin.host.loader.a.ActivityN1NRNTS5
@@ -186,7 +189,12 @@ PluginProcessPer.resolveActivityClass() -> 加载插件信息：plugin = plugind
 PluginProcessPer.resolveActivityClass() -> 使用插件 plugindemo1 的ClassLoader加载插件中Activity的Class：com.clark.learn.replugin.plugindemo1.MainActivity
 
 ```
-
+从上面的日志，我们可以看到启动插件MainActivity的过程，可以分为以下几个步骤：
+* 调用启动 插件MainActivity 的API，执行一系列启动方法；
+* 启动 插件MainActivity 时候，会去加载插件的所有信息，并将插件所有的Activity信息存储到：Loader.mComponents.mActivities；
+* 从Loader.mComponents.mActivities 获取到的 插件MainActivity 信息，PluginContainers.allocLocked() 方法会从宿主中寻找信息匹配的 坑位Activity 进行绑定，并将映射关系存储到：PluginContainers.mStates 里面去；
+* 当绑定完成之后，会将该 坑位Activity 返回，然后去启动该 坑位Activity；
+* RePluginClassLoader 会加载该 坑位Activity，然后会从 PluginContainers.lookupByContainer() 中，查询 PluginContainers.mStates 里面存储的 坑位Activity 映射关系，找到映射的 插件MainActivity，所以最后真正启动的就是 插件MainActivity。 
 
 
 
