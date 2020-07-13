@@ -40,10 +40,11 @@ Demo结构：
 
 3. plugindemo1
 > 编译生成的APK作为host的插件进行使用，集成了Replugin的replugin-plugin-gradle插件库、replugin-plugin-library依赖库。  
-
+> 
 
 4. plugindemo2
 > 编译生成的APK作为host的插件进行使用，集成了Replugin的replugin-plugin-gradle插件库、replugin-plugin-library依赖库。  
+> 使用 complieOnly 依赖了 supportV4 库，为了骗过编译期，从而加载宿主的 Fragment.class ，这样就保证了宿主和插件的 Fragment.class 是同一个，从而让宿主可以加载插件的Fragment。
 
 
 
