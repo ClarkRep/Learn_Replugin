@@ -27,3 +27,24 @@ Demo结构：
 * [1.2  从启动插件Activity的角度来分析Replugin的核心：HooK ClassLoader](README1_2.md)
 
 ## 二、Demo讲解
+前面的原理分析已经讲述了 replugin-host-gradle、replugin-host-library、replugin-plugin-gradle、replugin-plugin-library的一些原理，下面会结合本demo去实践一下Replugin的具体使用方式。
+
+1. host 
+> host 是本项目的宿主project，集成了Replugin的 replugin-host-gradle插件库、replugin-host-library依赖库，是用来调试各个插件的功能。   
+> 将**plugindemo1**和**plugindemo2**打包生成的apk作为插件放置在**host**的**assets**文件夹中，作为**host**的插件进行使用。
+
+
+2. library
+> library 是用来生成 test.jar 的库，本身和其他几个库没有任何依赖关系，只是提供 test.jar 给host和plugindemo1作为中间桥梁。
+
+
+3. plugindemo1
+> 编译生成的APK作为host的插件进行使用，集成了Replugin的replugin-plugin-gradle插件库、replugin-plugin-library依赖库。  
+> plugindemo1 是除了上面依赖的两个库，其他的依赖方式和普通应用的依赖一致。
+
+
+4. plugindemo2
+
+
+
+
