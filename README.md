@@ -40,11 +40,10 @@ Demo结构：
 
 3. plugindemo1
 > 编译生成的APK作为host的插件进行使用，集成了Replugin的replugin-plugin-gradle插件库、replugin-plugin-library依赖库。  
-> plugindemo1 是除了上面依赖的两个库，其他的依赖方式和普通应用的依赖一致。
 
 
 4. plugindemo2
-
+> 编译生成的APK作为host的插件进行使用，集成了Replugin的replugin-plugin-gradle插件库、replugin-plugin-library依赖库。  
 
 
 
