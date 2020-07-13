@@ -17,11 +17,7 @@
         </activity>
 
         <activity
-            android:name=".TestFragmentActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".TestClassNameActivity"
+            android:name=".TestPendingIntentActivity"
             android:screenOrientation="portrait" />
 
         <!-- 以下是 Replugin 需要配置的插件参数 ***************************************************** -->

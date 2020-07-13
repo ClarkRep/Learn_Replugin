@@ -33,8 +33,8 @@ ext {
             androidXLifecycleCommon      : 'androidx.lifecycle:lifecycle-common:2.0.0',
 
             //广告插件库
-            repluginHostLib              : project(':replugin-host-lib'),
-            repluginPluginLib            : project(':replugin-plugin-lib')
+            repluginHostLib              : project(':replugin-host-library'),
+            repluginPluginLib            : project(':replugin-plugin-library')
 //            repluginHostLib              : "androidx.activity:activity:1.0.0",
 //            repluginPluginLib            : "androidx.activity:activity:1.0.0"
     ]

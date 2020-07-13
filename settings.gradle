@@ -1,5 +1,5 @@
-include ':host', ':plugindemo1', ':library'
+include ':host', ':library', ':plugindemo1', ':plugindemo2'
 
-include ':replugin-host-lib', ':replugin-plugin-lib'
+include ':replugin-host-library', ':replugin-plugin-library'
 
 include ':replugin-host-gradle', ':replugin-plugin-gradle'

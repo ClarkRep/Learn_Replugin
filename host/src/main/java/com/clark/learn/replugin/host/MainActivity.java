@@ -20,42 +20,44 @@ import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
 
-
     private static final String TAG = "Learn_Plugin";
 
+    //以下是插件1的配置信息 ============================================================================
 
-    public static final String PLUGIN_DEMO1_NAME = "plugindemo1";
-    public static final String PLUGIN_DEMO1_APK = "plugindemo1-debug.apk";//assets 下面插件的apk名
+    //插件1 名称和文件名
+    public static final String PLUGIN1_NAME = "plugindemo1";
+    public static final String PLUGIN1_APK = "plugindemo1-debug.apk";//assets 下面插件的apk名
+
+    //插件1 的MainActivity
+    public static final String PLUGIN1_MAIN_ACTIVITY = "com.clark.learn.replugin.plugindemo1.MainActivity";
+    //插件1 用来测试PendingIntent跳转的Activity
+    public static final String PLUGIN_TEST_PENDING_INTENT_ACTIVITY = "com.clark.learn.replugin.plugindemo1.TestPendingIntentActivity";
+    //插件1 的IBridgeInterface实现类，用来让宿主调用插件的功能
+    public static final String PLUGIN_BRIDGE_IMPL = "com.clark.learn.replugin.plugindemo1.impl.BridgeInterfaceImpl";
+    //插件1 的IProxyFragmentView实现类，用来代理宿主的Fragment功能
+    public static final String PLUGIN_PROXY_FRAGMENT_VIEW_IMPL = "com.clark.learn.replugin.plugindemo1.impl.ProxyFragmentImpl";
+
+
+    //以下是插件2的配置信息 ============================================================================
+    //插件2 名称和文件名
+    public static final String PLUGIN2_NAME = "plugindemo2";
+    public static final String PLUGIN2_APK = "plugindemo2-debug.apk";//assets 下面插件的apk名
+
+    //插件2 的Fragment，用来让宿主加载
+    public static final String PLUGIN2_TEST_FRAGMENT = "com.clark.learn.replugin.plugindemo2.fragment.TestFragment";
+    //插件2 用来加载Fragment的Activity
+    public static final String PLUGIN2_TEST_FRAGMENT_ACTIVITY = "com.clark.learn.replugin.plugindemo2.TestFragmentActivity";
+    //插件2 的Activity，继承了Replugin的PluginFragmentActivity，用来测试 complieOnly androidx-fragment-1.1.0.jar，插件Activity能否正常启动插件的Activity。
+    public static final String PLUGIN2_TEST_PLUGIN_FRAGMENT_ACTIVITY = "com.clark.learn.replugin.plugindemo2.TestPluginFragmentActivity";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //安装插件1，跳转宿主Activity，在宿主Activity添加插件的Fragment
-        findViewById(R.id.btn_click1).setOnClickListener(v -> {
-            boolean isSuccess = simulateInstallExternalPlugin(PLUGIN_DEMO1_APK);
-            if (isSuccess) {
-                Intent intent = new Intent(MainActivity.this, TestPluginFragmentActivity.class);
-                startActivity(intent);
-            } else {
-                Toast.makeText(MainActivity.this, "install external plugin failed", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        //安装插件1，跳转宿主Activity，在宿主Activity里添加插件的View
-        findViewById(R.id.btn_click2).setOnClickListener(v -> {
-            boolean isSuccess = simulateInstallExternalPlugin(PLUGIN_DEMO1_APK);
-            if (isSuccess) {
-                Intent intent = new Intent(MainActivity.this, TestPluginInterfaceImplActivity.class);
-                startActivity(intent);
-            } else {
-                Toast.makeText(MainActivity.this, "install external plugin failed", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         //在宿主中，测试使用PendingIntent启动宿主的Activity
-        findViewById(R.id.btn_click3).setOnClickListener(v -> {
+        findViewById(R.id.host_btn).setOnClickListener(v -> {
             try {
                 String className = "com.clark.learn.replugin.host.MainActivity";
                 Class<?> aClass = Class.forName(className);
@@ -68,48 +70,90 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //安装插件1，跳转插件Activity
-        findViewById(R.id.btn_click4).setOnClickListener(v -> {
-            boolean isSuccess = simulateInstallExternalPlugin(PLUGIN_DEMO1_APK);
+        initPlugin1();
+        initPlugin2();
+    }
+
+
+    private void initPlugin1() {
+        //安装插件1，跳转插件的MainActivity
+        findViewById(R.id.plugin1_btn1).setOnClickListener(v -> {
+            boolean isSuccess = simulateInstallExternalPlugin(PLUGIN1_APK);
             if (isSuccess) {
                 Intent intent = new Intent();
-                intent.setComponent(new ComponentName(PLUGIN_DEMO1_NAME, "com.clark.learn.replugin.plugindemo1.MainActivity"));
+                intent.setComponent(new ComponentName(PLUGIN1_NAME, PLUGIN1_MAIN_ACTIVITY));
                 RePlugin.startActivity(MainActivity.this, intent);
             } else {
                 Toast.makeText(MainActivity.this, "install external plugin failed", Toast.LENGTH_SHORT).show();
             }
         });
 
-        //安装插件1，跳转插件Activity，在插件Activity添加插件的Fragment
-        findViewById(R.id.btn_click5).setOnClickListener(v -> {
-            boolean isSuccess = simulateInstallExternalPlugin(PLUGIN_DEMO1_APK);
+        //安装插件1，跳转宿主TestBridgeInterfaceImplActivity，测试链接宿主和插件的接口功能
+        findViewById(R.id.plugin1_btn2).setOnClickListener(v -> {
+            boolean isSuccess = simulateInstallExternalPlugin(PLUGIN1_APK);
             if (isSuccess) {
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName(PLUGIN_DEMO1_NAME, "com.clark.learn.replugin.plugindemo1.TestFragmentActivity"));
-                RePlugin.startActivity(MainActivity.this, intent);
-            } else {
-                Toast.makeText(MainActivity.this, "install external plugin failed", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        //安装插件1，跳转插件Activity，测试在插件Activity中使用PendingIntent跳转插件Activity能否成功
-        findViewById(R.id.btn_click6).setOnClickListener(v -> {
-            boolean isSuccess = simulateInstallExternalPlugin(PLUGIN_DEMO1_APK);
-            if (isSuccess) {
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName(PLUGIN_DEMO1_NAME, "com.clark.learn.replugin.plugindemo1.TestClassNameActivity"));
-                RePlugin.startActivity(MainActivity.this, intent);
-            } else {
-                Toast.makeText(MainActivity.this, "install external plugin failed", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        //安装插件1，跳转宿主Activity，在宿主Activity加载Fragment，该Fragment使用插件的代理类实现功能。
-        findViewById(R.id.btn_click7).setOnClickListener(v -> {
-            boolean isSuccess = simulateInstallExternalPlugin(PLUGIN_DEMO1_APK);
-            if (isSuccess) {
-                Intent intent = new Intent(MainActivity.this, TestPluginFragmentViewActivity.class);
+                Intent intent = new Intent(MainActivity.this, TestBridgeInterfaceImplActivity.class);
                 startActivity(intent);
+            } else {
+                Toast.makeText(MainActivity.this, "install external plugin failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //安装插件1，跳转插件TestPendingIntentActivity，测试在该Activity中使用PendingIntent启动插件Activity能否成功
+        findViewById(R.id.plugin1_btn3).setOnClickListener(v -> {
+            boolean isSuccess = simulateInstallExternalPlugin(PLUGIN1_APK);
+            if (isSuccess) {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(PLUGIN1_NAME, PLUGIN_TEST_PENDING_INTENT_ACTIVITY));
+                RePlugin.startActivity(MainActivity.this, intent);
+            } else {
+                Toast.makeText(MainActivity.this, "install external plugin failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //安装插件1，跳转宿主TestPluginFragmentViewActivity，在该Activity中加载HostFragment，该Fragment使用插件的代理类实现功能
+        findViewById(R.id.plugin1_btn4).setOnClickListener(v -> {
+            boolean isSuccess = simulateInstallExternalPlugin(PLUGIN1_APK);
+            if (isSuccess) {
+                Intent intent = new Intent(MainActivity.this, TestPluginProxyFragmentViewActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(MainActivity.this, "install external plugin failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void initPlugin2() {
+        //安装插件2，跳转宿主AddPluginFragmentActivity，在该Activity加载插件2的Fragment
+        findViewById(R.id.plugin2_btn1).setOnClickListener(v -> {
+            boolean isSuccess = simulateInstallExternalPlugin(PLUGIN2_APK);
+            if (isSuccess) {
+                Intent intent = new Intent(MainActivity.this, AddPluginFragmentActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(MainActivity.this, "install external plugin failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //安装插件2，跳转插件的TestFragmentActivity，在该Activity添加插件的Fragment
+        findViewById(R.id.plugin2_btn2).setOnClickListener(v -> {
+            boolean isSuccess = simulateInstallExternalPlugin(PLUGIN2_APK);
+            if (isSuccess) {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(PLUGIN2_NAME, PLUGIN2_TEST_FRAGMENT_ACTIVITY));
+                RePlugin.startActivity(MainActivity.this, intent);
+            } else {
+                Toast.makeText(MainActivity.this, "install external plugin failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //安装插件2，跳转插件TestPluginFragmentActivity，测试在该Activity中能否正常启动插件Activity
+        findViewById(R.id.plugin2_btn3).setOnClickListener(v -> {
+            boolean isSuccess = simulateInstallExternalPlugin(PLUGIN2_APK);
+            if (isSuccess) {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(PLUGIN2_NAME, PLUGIN2_TEST_PLUGIN_FRAGMENT_ACTIVITY));
+                RePlugin.startActivity(MainActivity.this, intent);
             } else {
                 Toast.makeText(MainActivity.this, "install external plugin failed", Toast.LENGTH_SHORT).show();
             }

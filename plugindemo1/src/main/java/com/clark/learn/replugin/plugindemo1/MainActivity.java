@@ -17,8 +17,6 @@ import com.qihoo360.replugin.RePlugin;
  */
 public class MainActivity extends FragmentActivity {
 
-    public static final String PLUGIN_DEMO1_NAME = "plugindemo1";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +27,7 @@ public class MainActivity extends FragmentActivity {
         setContentView(inflate);
 
         PackageManager packageManager = context.getPackageManager();
-        Intent intent = new Intent(context, TestFragmentActivity.class);
+        Intent intent = new Intent(context, TestPendingIntentActivity.class);
         if (null != packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY)) {
             Log.d("haha", "匹配上了");
         } else {

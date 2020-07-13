@@ -1,0 +1,78 @@
+apply plugin: 'com.android.application'
+
+def config = rootProject.ext.android
+def versions = rootProject.ext.versions
+def libraries = rootProject.ext.dependencies
+
+android {
+    // 编译SDK的版本
+    compileSdkVersion config.compileSdkVersion
+
+    defaultConfig {
+        applicationId "com.clark.learn.replugin.plugindemo2"
+        //minSDk
+        minSdkVersion config.minSdkVersion
+        //targetSdk
+        targetSdkVersion config.targetSdkVersion
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    //移除插件里面的Fragment引用
+    configurations {
+        /* 所有插件排除 fragment 依赖 */
+        all*.exclude group: 'androidx.fragment', module: 'fragment'
+//        all*.exclude group: 'androidx.vectordrawable'
+    }
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    //360插件库依赖
+    implementation libraries.repluginPluginLib
+
+    implementation libraries.androidXConstraintlayout
+
+    implementation libraries.androidXSupportV4
+    implementation libraries.androidXSupportV7
+
+    /*
+    以下是依赖让插件 compileOnly v4包的Fragment库，这样可以骗过编译期，让宿主可以加载插件的Fragment。
+    但是有严重问题，插件里面凡事继承了FragmentActivity或者其子类的话，在插件中直接使用常规Intent方式跳转的话就跳转不了。
+      */
+    compileOnly files('libs/androidx-fragment-1.1.0.jar')
+    compileOnly files('libs/androidx-activity-1.1.0.jar')
+    compileOnly files('libs/androidx-lifecycle-viewmodel-2.2.0.jar')
+    compileOnly files('libs/androidx-savedstate-savedstate-1.0.0.jar')
+    compileOnly files('libs/androidx-core-1.1.0.jar')
+    compileOnly files('libs/androidx-lifecycle-runtime-2.2.0.jar')
+    compileOnly files('libs/androidx-lifecycle-common-2.2.0.jar')
+
+}
+
+// 这个plugin需要放在android配置之后，因为需要读取android中的配置项
+apply plugin: 'replugin-plugin-gradle'
+repluginPluginConfig {
+    pluginName = "plugindemo2"
+    hostApplicationId = versions.hostApplicationId
+    hostAppLauncherActivity = "com.clark.learn.replugin.host.MainActivity"
+}

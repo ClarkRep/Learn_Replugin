@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.clark.learn.replugin.plugindemo2">
+
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name">
+
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".TestFragmentActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".TestPluginFragmentActivity"
+            android:screenOrientation="portrait" />
+
+        <!-- 以下是 Replugin 需要配置的插件参数 ***************************************************** -->
+        <meta-data
+            android:name="process_map"
+            android:value="[
+            {'from':'com.clark.learn.replugin.plugindemo2:bg','to':'$p0'}
+            ]" />
+
+        <meta-data
+            android:name="com.qihoo360.plugin.name"
+            android:value="plugindemo2" />
+
+        <meta-data
+            android:name="com.qihoo360.plugin.version.ver"
+            android:value="100" />
+    </application>
+
+</manifest>

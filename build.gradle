@@ -65,7 +65,7 @@ allprojects {
         jcenter()
 
         flatDir {
-            dirs project(':host').file('libs/')
+            dirs project(':library').file('libs')
         }
     }
 }

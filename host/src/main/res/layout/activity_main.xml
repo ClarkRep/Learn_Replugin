@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,74 +7,108 @@
     android:orientation="vertical"
     tools:context=".host.MainActivity">
 
-    <Button
-        android:id="@+id/btn_click1"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="安装插件1，跳转宿主Activity，在宿主Activity添加插件的Fragment"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/btn_click2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="安装插件1，跳转宿主Activity，在宿主Activity里添加插件的View"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_click3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="在宿主中，测试使用PendingIntent启动宿主的Activity"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <Button
+                android:id="@+id/host_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="在宿主中，测试使用PendingIntent启动宿主的Activity"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btn_click4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="安装插件1，跳转插件Activity"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="================== 插件1 ==================" />
 
-    <Button
-        android:id="@+id/btn_click5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="安装插件1，跳转插件Activity，在插件Activity添加插件的Fragment"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <Button
+                android:id="@+id/plugin1_btn1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="安装插件1，跳转 插件1 的MainActivity"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btn_click6"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="安装插件1，跳转插件Activity，测试在插件Activity中使用PendingIntent跳转插件Activity能否成功"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <Button
+                android:id="@+id/plugin1_btn2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="安装插件1，跳转宿主TestBridgeInterfaceImplActivity，测试链接宿主和插件的接口功能"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btn_click7"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="安装插件1，跳转宿主Activity，在宿主Activity加载Fragment，该Fragment使用插件的代理类实现功能。"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <Button
+                android:id="@+id/plugin1_btn3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="安装插件1，跳转插件TestPendingIntentActivity，测试在该Activity中使用PendingIntent启动插件Activity能否成功"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-</LinearLayout>
+            <Button
+                android:id="@+id/plugin1_btn4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="安装插件1，跳转宿主TestPluginFragmentViewActivity，在该Activity中加载HostFragment，该Fragment使用插件的代理类实现功能"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="================== 插件2 ==================" />
+
+            <Button
+                android:id="@+id/plugin2_btn1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="安装插件2，跳转宿主AddPluginFragmentActivity，在该Activity加载插件的Fragment"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/plugin2_btn2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="安装插件2，跳转插件的TestFragmentActivity，在该Activity添加插件的Fragment"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/plugin2_btn3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="安装插件2，跳转插件TestPluginFragmentActivity，测试在该Activity中能否正常启动插件Activity"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</FrameLayout>

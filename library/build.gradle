@@ -34,7 +34,7 @@ repositories {
 
 dependencies {
 
-    compileOnly files('libs/androidx-fragment-1.1.0.jar')
+//    compileOnly files('libs/androidx-fragment-1.1.0.jar')
 
 //    implementation libraries.androidXAppcompat
 //    implementation libraries.androidXConstraintlayout

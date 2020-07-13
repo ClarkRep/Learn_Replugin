@@ -13,10 +13,11 @@
             <option value="$PROJECT_DIR$/host" />
             <option value="$PROJECT_DIR$/library" />
             <option value="$PROJECT_DIR$/plugindemo1" />
+            <option value="$PROJECT_DIR$/plugindemo2" />
             <option value="$PROJECT_DIR$/replugin-host-gradle" />
-            <option value="$PROJECT_DIR$/replugin-host-lib" />
+            <option value="$PROJECT_DIR$/replugin-host-library" />
             <option value="$PROJECT_DIR$/replugin-plugin-gradle" />
-            <option value="$PROJECT_DIR$/replugin-plugin-lib" />
+            <option value="$PROJECT_DIR$/replugin-plugin-library" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

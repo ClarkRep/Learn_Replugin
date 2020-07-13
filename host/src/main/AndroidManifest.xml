@@ -3,7 +3,7 @@
     package="com.clark.learn.replugin">
 
     <application
-        android:name=".host.BaseApplication"
+        android:name=".host.application.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -22,11 +22,11 @@
         </activity>
 
         <activity
-            android:name=".host.TestPluginFragmentActivity"
+            android:name=".host.AddPluginFragmentActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".host.TestPluginInterfaceImplActivity"
+            android:name=".host.TestBridgeInterfaceImplActivity"
             android:screenOrientation="portrait" />
 
         <!--这个Activity声明是为了欺骗部分SDK校验四大组件是否在清单文件中声明-->
@@ -35,7 +35,7 @@
             android:screenOrientation="portrait" />
 
         <provider
-            android:name=".host.FileProvider"
+            android:name=".host.provider.FileProvider"
             android:authorities="com.clark.learn.replugin.FILE_PROVIDER"
             android:exported="false"
             android:grantUriPermissions="true">
@@ -44,12 +44,12 @@
                 android:resource="@xml/fileprovider_path" />
         </provider>
 
-<!--        <activity-->
-<!--            android:name="com.clark.learn.replugin.plugindemo1.TestClassNameActivity"-->
-<!--            android:screenOrientation="portrait" />-->
+        <!--        <activity-->
+        <!--            android:name="com.clark.learn.replugin.plugindemo1.TestClassNameActivity"-->
+        <!--            android:screenOrientation="portrait" />-->
 
         <activity
-            android:name=".host.TestPluginFragmentViewActivity"
+            android:name=".host.TestPluginProxyFragmentViewActivity"
             android:screenOrientation="portrait" />
 
     </application>
