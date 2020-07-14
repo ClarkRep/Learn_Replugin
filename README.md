@@ -47,4 +47,14 @@ Demo结构：
 > complieOnly 依赖了 supportV4 库，为了骗过编译期，从而加载宿主的 Fragment.class ，这样就保证了宿主和插件的 Fragment.class 是同一个，从而让宿主可以加载插件的Fragment。
 
 
+## 三、Replugin的缺陷
+
+### 问题1：宿主和插件的类隔离
+从上面**原理分析**可以看到，Replugin加载插件和宿主的使用的ClassLoader，是不同的ClassLoader，这就导致了使用的是相同的拓展库，并不能在宿主和插件中进行类型转换，会报 ClassCastException。除非插件使用compileOnly进行依赖，欺骗了编译期，从而会从宿主中去寻找该类。
+
+
+
+
+
+
 
