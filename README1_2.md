@@ -144,7 +144,7 @@ Replugin的核心点就是Hook住了宿主的ClassLoader，它会使用自己的
             //
         }
         
-        //都没有加载到的情况，交给父类，双亲委托。
+        //都没有加载到的情况，交给父类。
         return super.loadClass(className, resolve);
     }
 
@@ -254,6 +254,64 @@ PMF.loadClass()又调用了 PmBase.loadClass()，我们再进去看一下：
 3. 去默认插件里面加载对应的类；
 4. 上面步骤都没加载到的情况，让 Hook 的 ClassLoader 去加载该类；
 5. 还没加载到的情况让父类去加载。
+
+## PluginDexClassLoader 原理
+对比 RePluginClassLoader，PluginDexClassLoader的逻辑则相对简单很多
+```
+    @Override
+    protected Class<?> loadClass(String className, boolean resolve) throws ClassNotFoundException {
+        // 插件自己的Class。从自己开始一直到BootClassLoader，采用正常的双亲委派模型流程，读到了就直接返回
+        Class<?> pc = null;
+        ClassNotFoundException cnfException = null;
+        try {
+            pc = super.loadClass(className, resolve);
+            if (pc != null) {
+                // 只有开启“详细日志”才会输出，防止“刷屏”现象
+                if (LogDebug.LOG && RePlugin.getConfig().isPrintDetailLog()) {
+                    LogDebug.d(TAG, "loadClass: load plugin class, cn=" + className);
+                }
+                return pc;
+            }
+        } catch (ClassNotFoundException e) {
+            // Do not throw "e" now
+            cnfException = e;
+
+            if (PluginDexClassLoaderPatch.need2LoadFromHost(className)) {
+                try {
+                    return loadClassFromHost(className, resolve);
+                } catch (ClassNotFoundException e1) {
+                    // Do not throw "e1" now
+                    cnfException = e1;
+
+                    if (LogDebug.LOG) {
+                        LogDebug.e(TAG, "loadClass ClassNotFoundException, from HostClassLoader&&PluginClassLoader, cn=" + className + ", pluginName=" + mPluginName);
+                    }
+                }
+            } else {
+                if (LogDebug.LOG) {
+                    LogDebug.e(TAG, "loadClass ClassNotFoundException, from PluginClassLoader, cn=" + className + ", pluginName=" + mPluginName);
+                }
+            }
+        }
+
+        // 若插件里没有此类，则会从宿主ClassLoader中找，找到了则直接返回
+        // 注意：需要读取isUseHostClassIfNotFound开关。默认为关闭的。可参见该开关的说明
+        if (RePlugin.getConfig().isUseHostClassIfNotFound()) {
+            try {
+                return loadClassFromHost(className, resolve);
+            } catch (ClassNotFoundException e) {
+                // Do not throw "e" now
+                cnfException = e;
+            }
+        }
+
+        // At this point we can throw the previous exception
+        if (cnfException != null) {
+            throw cnfException;
+        }
+        return null;
+    }
+```
 
 ## 宿主启动插件Activity的流程
 
