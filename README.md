@@ -50,7 +50,13 @@ Demo结构：
 ## 三、Replugin的缺陷
 
 ### 问题1：宿主和插件的类隔离
-从上面**原理分析**可以看到，Replugin加载插件和宿主的使用的ClassLoader，是不同的ClassLoader，这就导致了使用的是相同的拓展库，并不能在宿主和插件中进行类型转换，会报 ClassCastException。除非插件使用compileOnly进行依赖，欺骗了编译期，从而会从宿主中去寻找该类。
+从上面**原理分析**可以看到，Replugin加载插件和宿主的使用的ClassLoader，是不同的ClassLoader，这就导致了使用的是相同的拓展库，并不能在宿主和插件中进行类型转换，会报 ClassCastException。除非插件使用compileOnly进行依赖，欺骗了编译期，从而会从宿主中去寻找该类。所以宿主初始化的一些对象或者属性，如果插件需要使用的话，还需要在插件再初始化一份，也就是将插件也作为一个可以独立运行的APP去打包。
+
+### 问题2:宿主加载插件Fragment存在的坑
+上面我们说了，插件使用 compileOnly 可以骗过编译期，从而去加载宿主的类。我们想让宿主加载插件的Fragment，则必须保证宿主和插件的Fragment.class是同一个对象，则需要插件使用 compileOnly fragment.jar 包去骗过编译期。这时候又存在一个严重的问题，使用 compileOnly fragment.jar之后，会导致 replugin-plugin-gradle 无法将继承 FragmentActivity 的子类的继承关系修改为继承 PluginFragmentActivity。因为 FragmentActivity.class 和Fragment.class是在同一个包里面，使用 compileOnly 编译的时候， replugin-plugin-gradle 没有办法判断是否继承 FragmentActivity 了，因为在插件APK里，FragmentActivity 不存在，所以没有办法修改继承关系。这就导致了在插件里凡是继承了 FragmentActivity 的子类，都没有办法使用 startActivity() 等一些方法。  
+
+
+
 
 
 
