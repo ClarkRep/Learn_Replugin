@@ -119,7 +119,141 @@ Replugin的核心点就是Hook住了宿主的ClassLoader，它会使用自己的
 
 通过上面这些步骤，就实现了 Hook 住应用默认 ClassLoader，这样 Replugin 就可以通过使用自己的 RePluginClassLoader 去实现插件化方案了。
 
+## RePluginClassLoader原理
+上面我们看到了Replugin是如何Hook ClassLoader的，现在我们来看一下RePluginClassLoader是如何进行类加载的，下面是RePluginClassLoader的loadClass()方法：
+```
+    @Override
+    protected Class<?> loadClass(String className, boolean resolve) throws ClassNotFoundException {
+        ...
+        
+        //先让PMF尝试去加载类
+        c = PMF.loadClass(className, resolve);
+        if (c != null) {
+            return c;
+        }
+        
+        //PMF如果没有加载到的情况，交给我们Hook住持有的默认的ClassLoader。
+        try {
+            c = mOrig.loadClass(className);
+            // 只有开启“详细日志”才会输出，防止“刷屏”现象
+            if (LogDebug.LOG && RePlugin.getConfig().isPrintDetailLog()) {
+                LogDebug.d(TAG, "loadClass: load other class, cn=" + className);
+            }
+            return c;
+        } catch (Throwable e) {
+            //
+        }
+        
+        //都没有加载到的情况，交给父类，双亲委托。
+        return super.loadClass(className, resolve);
+    }
 
+```
+
+上面我们看到了，RePluginClassLoader.loadClass()又会调用 PMF.loadClass()方法，我们再看一下这个方法：
+```
+    public static final Class<?> loadClass(String className, boolean resolve) {
+        return sPluginMgr.loadClass(className, resolve);
+    }
+
+```
+
+PMF.loadClass()又调用了 PmBase.loadClass()，我们再进去看一下：
+```
+    final Class<?> loadClass(String className, boolean resolve) {
+        
+        // 加载Service中介坑位
+        if (className.startsWith(PluginPitService.class.getName())) {
+            if (LOG) {
+                LogDebug.i(TAG, "loadClass: Loading PitService Class... clz=" + className);
+            }
+            return PluginPitService.class;
+        }
+
+        // 如果是坑位Activity里的className，那么就尝试去解析坑位Activity所对应的插件Activity。
+        if (mContainerActivities.contains(className)) {
+            Class<?> c = mClient.resolveActivityClass(className);
+            if (c != null) {
+                return c;
+            }
+            //解析失败返回一个默认模型Activity，防止崩溃。
+            return DummyActivity.class;
+        }
+
+        // 和坑位Activity同理，解析坑位Service。
+        if (mContainerServices.contains(className)) {
+            Class<?> c = loadServiceClass(className);
+            if (c != null) {
+                return c;
+            }
+            return DummyService.class;
+        }
+
+        //  和坑位Activity同理，解析坑位Provider。
+        if (mContainerProviders.contains(className)) {
+            Class<?> c = loadProviderClass(className);
+            if (c != null) {
+                return c;
+            }
+            return DummyProvider.class;
+        }
+
+        // 尝试去插件定制表里面自定义的，需要跳转到插件类的映射类，可以参考 RePlugin.registerHookingClass() 方法。
+        DynamicClass dc = mDynamicClasses.get(className);
+        ...
+        
+        //去加载默认插件的class（默认插件和配置文件的位置，一般默认是在 assets 的 plugins-builtin.json 和 "plugins" 文件夹下）。
+        return loadDefaultClass(className);
+    }
+    
+```
+```
+    //去默认插件的加载类
+    private final Class<?> loadDefaultClass(String className) {
+        //获取默认插件
+        Plugin p = mDefaultPlugin;
+        if (p == null) {
+            if (PluginManager.isPluginProcess()) {
+                if (LOG) {
+                    LogDebug.d(PLUGIN_TAG, "plugin class loader: not found default plugin,  in=" + className);
+                }
+            }
+            return null;
+        }
+
+        ClassLoader cl = p.getClassLoader();
+        if (LOG) {
+            LogDebug.d(PLUGIN_TAG, "plugin class loader: in=" + className);
+        }
+        Class<?> c = null;
+        try {
+            c = cl.loadClass(className);
+        } catch (Throwable e) {
+            if (LOG) {
+                if (e != null && e.getCause() instanceof ClassNotFoundException) {
+                    if (LOG) {
+                        LogDebug.d(PLUGIN_TAG, "plugin classloader not found className=" + className);
+                    }
+                } else {
+                    if (LOG) {
+                        LogDebug.d(PLUGIN_TAG, e.getMessage(), e);
+                    }
+                }
+            }
+        }
+        if (LOG) {
+            LogDebug.d(PLUGIN_TAG, "plugin class loader: c=" + c + ", loader=" + cl);
+        }
+        return c;
+    }
+```
+
+从上面的源码，我们可以分析出 RePluginClassLoader 加载插件的具体流程：
+1. 首先判断加载的类如果是坑位Activity、Service、Provider的时候，会去解析查到对应匹配的插件类；
+2. 如果是自定义的映射类，则去自定义注册的插件映射关系里面寻找所要映射的插件类；
+3. 去默认插件里面加载对应的类；
+4. 上面步骤都没加载到的情况，让 Hook 的 ClassLoader 去加载该类；
+5. 还没加载到的情况让父类去加载。
 
 ## 宿主启动插件Activity的流程
 
