@@ -50,10 +50,28 @@ Demo结构：
 ## 三、Replugin的缺陷
 
 ### 问题1：宿主和插件的类隔离
-从上面**原理分析**可以看到，Replugin加载插件和宿主的使用的ClassLoader，是不同的ClassLoader，这就导致了使用的是相同的拓展库，并不能在宿主和插件中进行类型转换，会报 ClassCastException。除非插件使用compileOnly进行依赖，欺骗了编译期，从而会从宿主中去寻找该类。所以宿主初始化的一些对象或者属性，如果插件需要使用的话，还需要在插件再初始化一份，也就是将插件也作为一个可以独立运行的APP去打包。
+从上面**原理分析**可以看到，Replugin加载插件和宿主的使用的ClassLoader，是不同的ClassLoader，这就导致了使用的是相同的拓展库，并不能在宿主和插件中进行类型转换，会报 ClassCastException。除非插件使用compileOnly进行依赖，欺骗了编译期，从而会从宿主中去寻找该类。所以宿主初始化的一些对象或者属性，如果插件需要使用的话，还需要在插件再初始化一份，也就是将插件也作为一个可以独立运行的APP去打包。  
+将插件作为一个独立APP进行打包还是有个问题，就是臃肿，因为作为独立apk打包，依赖的库就比较多了，这样打包出来的插件甚至会和宿主差不多大小，所以需要尽可能的去减小插件的依赖，缩小插件的体积。
 
 ### 问题2:宿主加载插件Fragment存在的坑
-上面我们说了，插件使用 compileOnly 可以骗过编译期，从而去加载宿主的类。我们想让宿主加载插件的Fragment，则必须保证宿主和插件的Fragment.class是同一个对象，则需要插件使用 compileOnly fragment.jar 包去骗过编译期。这时候又存在一个严重的问题，使用 compileOnly fragment.jar之后，会导致 replugin-plugin-gradle 无法将继承 FragmentActivity 的子类的继承关系修改为继承 PluginFragmentActivity。因为 FragmentActivity.class 和Fragment.class是在同一个包里面，使用 compileOnly 编译的时候， replugin-plugin-gradle 没有办法判断是否继承 FragmentActivity 了，因为在插件APK里，FragmentActivity 不存在，所以没有办法修改继承关系。这就导致了在插件里凡是继承了 FragmentActivity 的子类，都没有办法使用 startActivity() 等一些方法。  
+上面我们说了，插件使用 compileOnly 可以骗过编译期，从而去加载宿主的类。我们想让宿主加载插件的Fragment，则必须保证宿主和插件的Fragment.class是同一个对象，则需要插件使用 compileOnly fragment.jar 包去骗过编译期。这时候又存在一个严重的问题，使用 compileOnly fragment.jar之后，会导致 replugin-plugin-gradle 无法将继承 FragmentActivity 的子类的继承关系修改为继承 PluginFragmentActivity。因为 FragmentActivity.class 和 Fragment.class 是在同一个包里面，使用 compileOnly 编译的时候， 在插件APK里 FragmentActivity.class 就不存在了，所以 replugin-plugin-gradle 没有办法修改继承关系。这就导致了在插件里凡是继承了 FragmentActivity 的子类，都没有办法使用 startActivity() 等一些 PluginFragmentActivity hook住的方法。  
+解决办法：让插件的所有要继承FragmentActivity的都继承 PluginFragmentActivity，这样就符合了Replugin所需要修改的默认继承关系，但是耦合性太高。
+
+### 问题3:一些特殊的启动Activity方式在插件中无法使用
+我们在插件中，使用 startActivity() 是没问题的，因为 replugin-plugin-gradle 修改了继承关系，这样保证我们可以和宿主一样去启动Activity。但是有一些特殊的Activity启动方式，我在插件里做了实验，是无法正常启动Activity的（宿主中可以）。比如广点通广告SDK启动他们的广告页面，是使用下面这种方式启动的：
+```
+  String className = "com.clark.learn.replugin.plugindemo1.TestClassNameActivity";
+  Class<?> aClass = Class.forName(className);
+  Intent intent = new Intent();
+  intent.setClassName(TestPendingIntentActivity.this, className);
+  PendingIntent activity = PendingIntent.getActivity(TestPendingIntentActivity.this, 0, intent, 134217728);
+  activity.send();
+```
+这种启动方式在插件里去启动插件自身的Activity是行不通的，估计是由于该启动方式越过了Replugin所Hook住的逻辑，默认去开启宿主的Activity了，从而异常崩溃了，暂时没有解决办法。
+
+### 问题4:一些第三方SDK的兼容性问题
+如果我们使用的插件里集成里宿主没有的第三方库，这就需要小心一点，因为第三方库的逻辑有可能和Replugin不太兼容，建议这类第三方库都交给宿主去集成，插件compileOnly去使用。
+
 
 
 
