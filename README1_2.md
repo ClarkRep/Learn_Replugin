@@ -255,6 +255,7 @@ PMF.loadClass()又调用了 PmBase.loadClass()，我们再进去看一下：
 4. 上面步骤都没加载到的情况，让 Hook 的 ClassLoader 去加载该类；
 5. 还没加载到的情况让父类去加载。
 
+
 ## PluginDexClassLoader 原理
 对比 RePluginClassLoader，PluginDexClassLoader的逻辑则相对简单很多
 ```
@@ -275,17 +276,13 @@ PMF.loadClass()又调用了 PmBase.loadClass()，我们再进去看一下：
         } catch (ClassNotFoundException e) {
             // Do not throw "e" now
             cnfException = e;
-
+            //判断该类是否需要从宿主加载（OkHttp3和Apache的网络库需要去宿主加载）
             if (PluginDexClassLoaderPatch.need2LoadFromHost(className)) {
                 try {
                     return loadClassFromHost(className, resolve);
                 } catch (ClassNotFoundException e1) {
                     // Do not throw "e1" now
                     cnfException = e1;
-
-                    if (LogDebug.LOG) {
-                        LogDebug.e(TAG, "loadClass ClassNotFoundException, from HostClassLoader&&PluginClassLoader, cn=" + className + ", pluginName=" + mPluginName);
-                    }
                 }
             } else {
                 if (LogDebug.LOG) {
