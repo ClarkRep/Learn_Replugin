@@ -119,7 +119,7 @@ Replugin的核心点就是Hook住了宿主的ClassLoader，它会使用自己的
 
 通过上面这些步骤，就实现了 Hook 住应用默认 ClassLoader，这样 Replugin 就可以通过使用自己的 RePluginClassLoader 去实现插件化方案了。
 
-## RePluginClassLoader原理
+## RePluginClassLoader 原理
 上面我们看到了Replugin是如何Hook ClassLoader的，现在我们来看一下RePluginClassLoader是如何进行类加载的，下面是RePluginClassLoader的loadClass()方法：
 ```
     @Override
