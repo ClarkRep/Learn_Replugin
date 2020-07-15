@@ -315,7 +315,7 @@ PMF.loadClass()又调用了 PmBase.loadClass()，我们再进去看一下：
 先看一下在宿主中启动插件Activity的调用方式：
 ```
   Intent intent = new Intent();
-  intent.setComponent(new ComponentName(PLUGIN_DEMO1_NAME, "com.clark.learn.replugin.plugindemo1.TestFragmentActivity"));
+  intent.setComponent(new ComponentName(PLUGIN_DEMO1_NAME, "com.clark.learn.replugin.plugindemo1.MainActivity"));
   RePlugin.startActivity(MainActivity.this, intent);
 ```
 
