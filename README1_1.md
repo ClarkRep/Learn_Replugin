@@ -199,11 +199,89 @@ public enum Injectors {
             'android.preference.PreferenceActivity'   : 'com.qihoo360.replugin.loader.a.PluginPreferenceActivity',
             'android.app.ExpandableListActivity'      : 'com.qihoo360.replugin.loader.a.PluginExpandableListActivity'
     ]
+    
+    /**
+      * 该方法修改Activity的继承关系，将之前的继承关系对照上面的替换规则进行替换。
+      */
+    private def handleActivity(ClassPool pool, String activity, String classesDir) {
+        def clsFilePath = classesDir + File.separatorChar + activity.replaceAll('\\.', '/') + '.class'
+        if (!new File(clsFilePath).exists()) {
+            return
+        }
+
+        println ">>> Handle $activity"
+
+        def stream, ctCls
+        try {
+            stream = new FileInputStream(clsFilePath)
+            ctCls = pool.makeClass(stream);
+            
+            // ctCls 之前的父类
+            def originSuperCls = ctCls.superclass
+
+            /* 从当前 Activity 往上回溯，直到找到需要替换的 Activity */
+            def superCls = originSuperCls
+            while (superCls != null && !(superCls.name in loaderActivityRules.keySet())) {
+                // println ">>> 向上查找 $superCls.name"
+                ctCls = superCls
+                superCls = ctCls.superclass
+            }
+
+            // 如果 ctCls 已经是 LoaderActivity，则不修改
+            if (ctCls.name in loaderActivityRules.values()) {
+                // println "    跳过 ${ctCls.getName()}"
+                return
+            }
+
+            /* 找到需要替换的 Activity, 修改 Activity 的父类为 LoaderActivity */
+            if (superCls != null) {
+                def targetSuperClsName = loaderActivityRules.get(superCls.name)
+                // println "    ${ctCls.getName()} 的父类 $superCls.name 需要替换为 ${targetSuperClsName}"
+                CtClass targetSuperCls = pool.get(targetSuperClsName)
+
+                if (ctCls.isFrozen()) {
+                    ctCls.defrost()
+                }
+                ctCls.setSuperclass(targetSuperCls)
+
+                // 修改声明的父类后，还需要方法中所有的 super 调用。
+                ctCls.getDeclaredMethods().each { outerMethod ->
+                    outerMethod.instrument(new ExprEditor() {
+                        @Override
+                        void edit(MethodCall call) throws CannotCompileException {
+                            if (call.isSuper()) {
+                                if (call.getMethod().getReturnType().getName() == 'void') {
+                                    call.replace('{super.' + call.getMethodName() + '($$);}')
+                                } else {
+                                    call.replace('{$_ = super.' + call.getMethodName() + '($$);}')
+                                }
+                            }
+                        }
+                    })
+                }
+
+                ctCls.writeFile(CommonData.getClassPath(ctCls.name))
+                println "    Replace ${ctCls.name}'s SuperClass ${superCls.name} to ${targetSuperCls.name}"
+            }
+
+        } catch (Throwable t) {
+            println "    [Warning] --> ${t.toString()}"
+        } finally {
+            if (ctCls != null) {
+                ctCls.detach()
+            }
+            if (stream != null) {
+                stream.close()
+            }
+        }
+    }
+
 ```
 
-这里可以看到，plugin的插件会在编译期，将Activity的依赖关系进行映射表规则的修改，而修改后的XXPluginActivity，则会重写原先继承的Activity的一些方法，保证在插件里面的Activiy功能的正常使用：
+这里可以看到，LoaderActivityInjector 的 handleActivity() 方法会在编译期将 Activity 的继承关系参照映射表规则进行修改。比如 MainActivity 之前继承的是 FragmentActivity，按照映射表规则，会将 MainActivity 修改为继承 PluginFragmentActivity。而修改后所继承的 PluginFragmentActivity，则会复写它所继承的 FragmentActivity 的一些方法，保证在插件里面的 Activiy 功能的正常使用。
+
 ```
-public abstract class PluginActivity extends Activity {
+public abstract class PluginFragmentActivity extends FragmentActivity {
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -212,10 +290,18 @@ public abstract class PluginActivity extends Activity {
     }
 
     @Override
+    public Context getBaseContext() {
+
+        return super.getBaseContext();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         //
         RePluginInternal.handleActivityCreateBefore(this, savedInstanceState);
+
         super.onCreate(savedInstanceState);
+
         //
         RePluginInternal.handleActivityCreate(this, savedInstanceState);
     }
@@ -224,6 +310,7 @@ public abstract class PluginActivity extends Activity {
     protected void onDestroy() {
         //
         RePluginInternal.handleActivityDestroy(this);
+
         super.onDestroy();
     }
 
@@ -246,7 +333,7 @@ public abstract class PluginActivity extends Activity {
             // 1、可能无法恢复系统级View的保存的状态；
             // 2、如果自己代码处理不当，可能会出现异常。故自己代码一定要用SecExtraUtils来获取Bundle数据
             if (LogRelease.LOGR) {
-                LogRelease.e("PluginActivity", "o r i s: p=" + getPackageCodePath() + "; " + e.getMessage(), e);
+                LogRelease.e("PluginFragmentActivity", "o r i s: p=" + getPackageCodePath() + "; " + e.getMessage(), e);
             }
         }
     }
@@ -255,20 +342,73 @@ public abstract class PluginActivity extends Activity {
     public void startActivity(Intent intent) {
         //
         if (RePluginInternal.startActivity(this, intent)) {
-            // 这个地方不需要回调startActivityAfter，因为Factory2最终还是会回调回来，最终还是要走super.startActivity()
+            // 这个地方不需要回调startActivityAfter，因为RePluginInternal最终还是会回调回来，最终还是要走super.startActivity()
             return;
         }
+
         super.startActivity(intent);
     }
 
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
+        startActivityForResult(intent, requestCode, null);
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode, Bundle options) {
         //
-        if (RePluginInternal.startActivityForResult(this, intent, requestCode)) {
-            // 这个地方不需要回调startActivityAfter，因为Factory2最终还是会回调回来，最终还是要走super.startActivityForResult()
+        if (RePluginInternal.startActivityForResult(this, intent, requestCode, options)) {
             return;
         }
-        super.startActivityForResult(intent, requestCode);
+
+        if (Build.VERSION.SDK_INT >= 16) {
+            super.startActivityForResult(intent, requestCode, options);
+        } else {
+            super.startActivityForResult(intent, requestCode);
+        }
+    }
+
+    /**
+     * 这里的做法是支持Fragment中调用startActivityForResult特性
+     * <p>
+     * 由于卫士的插件需要hook住XXX-Activity的startActivity和startActivityForResult接口
+     * 但早期版本的support-v4在startActivityFromFragment中直接调用了super.startActivityForResult, 因此这里还需要hook住这个点
+     * 但新版的support-v4中Fragment最终的调用链还是会走到本XXX-Activity的startActivityForResult接口，因此不需要适配startActivityFromFragment(Fragment fragment, Intent intent, int requestCode, @Nullable Bundle options)接口
+     *
+     * @param fragment
+     * @param intent
+     * @param requestCode
+     */
+    @Override
+    public void startActivityFromFragment(Fragment fragment, Intent intent, int requestCode) {
+        if (requestCode == -1) {
+            startActivityForResult(intent, -1);
+        } else if ((requestCode & -65536) != 0) {
+            throw new IllegalArgumentException("Can only use lower 16 bits for requestCode");
+        } else {
+            int newRequestCode = -1;
+            try {
+                Field f = Fragment.class.getDeclaredField("mIndex");
+                boolean acc = f.isAccessible();
+                if (!acc) {
+                    f.setAccessible(true);
+                }
+                Object o = f.get(fragment);
+                if (!acc) {
+                    f.setAccessible(acc);
+                }
+                int index = (Integer) o;
+                newRequestCode = ((index + 1) << 16) + (requestCode & '\uffff');
+            } catch (Throwable e) {
+                // Do Noting
+            }
+            startActivityForResult(intent, newRequestCode);
+        }
+    }
+
+    @Override
+    public String getPackageCodePath() {
+        return super.getPackageCodePath();
     }
 }
 
