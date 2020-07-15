@@ -1,4 +1,4 @@
-# 从启动插件Activity的角度来分析Replugin的核心：HooK ClassLoader
+# 从启动插件Activity的角度来分析Replugin的核心：Hook ClassLoader
 Replugin的核心点就是Hook住了宿主的ClassLoader，它会使用自己的 RePluginClassLoader 替换了宿主的 ClassLoader，在loadClass的时候，就会优先去取插件里面的Class，当插件里没有找到该Class的时候，则会调用原来的ClassLoader取加载Class。  
 这里会用宿主启动插件Activity的流程，来分析一下Hook ClassLoader的具体原理。  
 带着下面的问题，我们来看一下replugin-host-library 的源码：
