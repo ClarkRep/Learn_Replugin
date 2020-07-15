@@ -24,7 +24,7 @@ Demo结构：
 ## 一、原理分析
 
 * [1.1  Replugin插件编译期做了什么？](README1_1.md)
-* [1.2  从启动插件Activity的角度来分析Replugin的核心：HooK ClassLoader](README1_2.md)
+* [1.2  从启动插件Activity的角度来分析Replugin的核心：Hook ClassLoader](README1_2.md)
 
 ## 二、Demo讲解
 前面的原理分析已经讲述了 replugin-host-gradle、replugin-host-library、replugin-plugin-gradle、replugin-plugin-library的一些原理，下面会结合本demo去实践一下Replugin的具体使用方式。
