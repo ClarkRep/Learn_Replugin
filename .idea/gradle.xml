@@ -14,6 +14,7 @@
             <option value="$PROJECT_DIR$/library" />
             <option value="$PROJECT_DIR$/plugindemo1" />
             <option value="$PROJECT_DIR$/plugindemo2" />
+            <option value="$PROJECT_DIR$/plugindemo3" />
             <option value="$PROJECT_DIR$/replugin-host-gradle" />
             <option value="$PROJECT_DIR$/replugin-host-library" />
             <option value="$PROJECT_DIR$/replugin-plugin-gradle" />

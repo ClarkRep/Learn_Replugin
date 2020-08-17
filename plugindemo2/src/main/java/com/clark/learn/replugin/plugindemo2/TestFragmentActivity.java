@@ -22,6 +22,9 @@ public class TestFragmentActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //使用compileOnly fragment.jar，会导致插件编译期的时候，由于找不到FragmentActivity，从而无法修改继承关系为继承 PluginFragmentActivity.
+        //使用compileOnly fragment.jar 无法直接使用 setContentView()，很坑爹。
         Context context = RePlugin.getPluginContext();
         View inflate = LayoutInflater.from(context).inflate(R.layout.activity_test_fragment, null);
         setContentView(inflate);

@@ -210,7 +210,9 @@ class PmBase {
 
         String plugin;
 
-        /** @deprecated */
+        /**
+         * @deprecated
+         */
         String classType; // activity, service, provider
 
         Class defClass;
@@ -301,7 +303,6 @@ class PmBase {
 
     /**
      * Persistent(常驻)进程的初始化
-     *
      */
     private final void initForServer() {
         if (LOG) {
@@ -335,7 +336,6 @@ class PmBase {
 
     /**
      * Client(UI进程)的初始化
-     *
      */
     private final void initForClient() {
         if (LOG) {
@@ -811,7 +811,6 @@ class PmBase {
             return dc.defClass;
         }
 
-        //
         return loadDefaultClass(className);
     }
 
@@ -820,7 +819,6 @@ class PmBase {
      * @return
      */
     private final Class<?> loadServiceClass(String className) {
-        //
         Plugin p = mDefaultPlugin;
         if (p == null) {
             if (LOG) {
@@ -904,7 +902,7 @@ class PmBase {
      * @return
      */
     private final Class<?> loadDefaultClass(String className) {
-        //
+        Log.d(RePlugin.MY_TAG, "PmBase.loadDefaultClass() -> mDefaultPlugin = " + mDefaultPlugin);
         Plugin p = mDefaultPlugin;
         if (p == null) {
             if (PluginManager.isPluginProcess()) {
@@ -965,7 +963,8 @@ class PmBase {
                     if (load) {
                         try {
                             PluginBinderInfo info = new PluginBinderInfo(PluginBinderInfo.BINDER_REQUEST);
-                            /*IPluginClient client = */MP.startPluginProcess(a, IPluginManager.PROCESS_AUTO, info);
+                            /*IPluginClient client = */
+                            MP.startPluginProcess(a, IPluginManager.PROCESS_AUTO, info);
                         } catch (Throwable e) {
                             e.printStackTrace();
                         }

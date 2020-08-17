@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        RePlugin.preload("plugindemo3");
+
         //在宿主中，测试使用PendingIntent启动宿主的Activity
         findViewById(R.id.host_btn).setOnClickListener(v -> {
             try {

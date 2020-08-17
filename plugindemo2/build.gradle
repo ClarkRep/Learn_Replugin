@@ -38,6 +38,19 @@ android {
         all*.exclude group: 'androidx.fragment', module: 'fragment'
 //        all*.exclude group: 'androidx.vectordrawable'
     }
+
+    //这里移除宿主里面的类，但是被直接引用的删除不掉
+//    applicationVariants.all { variant ->
+//        variant.javaCompile.doLast {
+//            println("${buildDir}/intermediates/classes/debug/com/clark/learn/replugin/library/ITestInterface.class")
+//            def deleteFile = new File("${buildDir}/intermediates/classes/debug/com/clark/learn/replugin/library/ITestInterface.class")
+//            deleteFile.delete()
+//
+//            println("${buildDir}/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/clark/learn/replugin/library/ITestInterface.class")
+//            def deleteFile3 = new File("${buildDir}/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/clark/learn/replugin/library/ITestInterface.class")
+//            deleteFile3.delete()
+//        }
+//    }
 }
 
 repositories {
@@ -49,8 +62,6 @@ repositories {
 dependencies {
     //360插件库依赖
     implementation libraries.repluginPluginLib
-
-    implementation libraries.androidXConstraintlayout
 
     implementation libraries.androidXSupportV4
     implementation libraries.androidXSupportV7
